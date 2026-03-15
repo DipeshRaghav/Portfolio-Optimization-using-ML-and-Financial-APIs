@@ -23,7 +23,6 @@ def fetch_stock_data(start="2018-01-01", end="2024-01-01"):
 
     return prices
 
-
 def clean_data(df):
 
     print("Cleaning missing values...")
