@@ -1,103 +1,92 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
-
+import os
 
 TICKERS = ["AAPL", "MSFT", "GOOGL", "TSLA"]
 
+# -------------------------------
+# 1. Fetch Data
+# -------------------------------
 def fetch_stock_data(start="2018-01-01", end="2024-01-01"):
-
     print("Fetching stock data...")
 
     data = yf.download(
         TICKERS,
         start=start,
         end=end,
-        auto_adjust=True,
-        group_by="column"
+        auto_adjust=True
     )
 
     prices = data["Close"]
-
     return prices
 
+
+# -------------------------------
+# 2. Clean Data
+# -------------------------------
 def clean_data(df):
-
     print("Cleaning missing values...")
-
     df = df.ffill()
     df = df.bfill()
-
     return df
 
 
+# -------------------------------
+# 3. Compute Returns
+# -------------------------------
 def compute_returns(df):
-
     print("Calculating daily returns...")
-
     returns = df.pct_change()
-
     returns = returns.dropna()
-
     return returns
 
-def normalize_data(df):
 
-    print("Scaling data...")
+# -------------------------------
+# 4. Save Processed Data (IMPORTANT)
+# -------------------------------
+def save_processed_data(returns):
+    print("Saving processed data...")
 
-    scaler = StandardScaler()
+    os.makedirs("data/processed", exist_ok=True)
 
-    scaled = scaler.fit_transform(df)
+    # Save separate file for each stock
+    for stock in returns.columns:
+        stock_df = returns[[stock]].copy()
+        stock_df.columns = ["Return"]
 
-    scaled_df = pd.DataFrame(
-        scaled,
-        columns=df.columns,
-        index=df.index
-    )
+        output_path = f"data/processed/{stock}_clean.csv"
+        stock_df.to_csv(output_path)
 
-    return scaled_df
-
-
-def split_data(df, ratio=0.8):
-
-    print("Splitting data into train/test...")
-
-    split = int(len(df) * ratio)
-
-    train = df.iloc[:split]
-
-    test = df.iloc[split:]
-
-    return train, test
+        print(f"Saved: {output_path}")
 
 
+# -------------------------------
+# 5. Main Preprocessing Function
+# -------------------------------
 def preprocess():
 
     prices = fetch_stock_data()
-
     prices = clean_data(prices)
 
     returns = compute_returns(prices)
 
-    scaled_returns = normalize_data(returns)
+    save_processed_data(returns)
 
-    train, test = split_data(scaled_returns)
-
-    return prices, returns, train, test
+    return prices, returns
 
 
+# -------------------------------
+# 6. Run Script
+# -------------------------------
 if __name__ == "__main__":
 
-    prices, returns, train, test = preprocess()
+    prices, returns = preprocess()
 
     print("\nData Shapes")
     print("-------------------")
-
     print("Prices:", prices.shape)
     print("Returns:", returns.shape)
-    print("Train:", train.shape)
-    print("Test:", test.shape)
 
-    print("\nFirst few rows of returns:")
+    print("\nSample Returns Data:")
     print(returns.head())
