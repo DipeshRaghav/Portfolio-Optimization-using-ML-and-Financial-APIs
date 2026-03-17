@@ -6,7 +6,6 @@ from sklearn.preprocessing import StandardScaler
 
 TICKERS = ["AAPL", "MSFT", "GOOGL", "TSLA"]
 
-
 def fetch_stock_data(start="2018-01-01", end="2024-01-01"):
 
     print("Fetching stock data...")
@@ -42,7 +41,6 @@ def compute_returns(df):
     returns = returns.dropna()
 
     return returns
-
 
 def normalize_data(df):
 
