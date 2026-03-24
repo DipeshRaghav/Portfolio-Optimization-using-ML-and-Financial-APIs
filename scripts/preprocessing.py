@@ -43,17 +43,23 @@ def compute_returns(df):
 
 
 # -------------------------------
-# 4. Save Processed Data (IMPORTANT)
+# 4. Save Processed Data (FIXED)
 # -------------------------------
-def save_processed_data(returns):
+def save_processed_data(prices, returns):
     print("Saving processed data...")
 
     os.makedirs("data/processed", exist_ok=True)
 
-    # Save separate file for each stock
-    for stock in returns.columns:
-        stock_df = returns[[stock]].copy()
-        stock_df.columns = ["Return"]
+    for stock in prices.columns:
+
+        # ✅ Save BOTH Close + Return
+        stock_df = pd.DataFrame({
+            "Close": prices[stock],
+            "Return": returns[stock]
+        })
+
+        # Remove NaN values
+        stock_df = stock_df.dropna()
 
         output_path = f"data/processed/{stock}_clean.csv"
         stock_df.to_csv(output_path)
@@ -71,7 +77,8 @@ def preprocess():
 
     returns = compute_returns(prices)
 
-    save_processed_data(returns)
+    # ✅ pass BOTH prices + returns
+    save_processed_data(prices, returns)
 
     return prices, returns
 
