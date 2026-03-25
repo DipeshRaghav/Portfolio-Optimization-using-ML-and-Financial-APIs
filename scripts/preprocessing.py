@@ -43,7 +43,7 @@ def compute_returns(df):
 
 
 # -------------------------------
-# 4. Save Processed Data (IMPORTANT)
+# 4. Save Processed Data (FIXED)
 # -------------------------------
 def save_processed_data(prices, returns):
     print("Saving processed data...")
@@ -60,6 +60,15 @@ def save_processed_data(prices, returns):
             "Close": close_series,
             "Return": return_series
         })
+
+        stock_df = stock_df.dropna()
+        # ✅ Save BOTH Close + Return
+        stock_df = pd.DataFrame({
+            "Close": prices[stock],
+            "Return": returns[stock]
+        })
+
+        # Remove NaN values
 
         stock_df = stock_df.dropna()
 
