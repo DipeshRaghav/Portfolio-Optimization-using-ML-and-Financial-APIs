@@ -45,21 +45,28 @@ def compute_returns(df):
 # -------------------------------
 # 4. Save Processed Data (IMPORTANT)
 # -------------------------------
-def save_processed_data(returns):
+def save_processed_data(prices, returns):
     print("Saving processed data...")
 
     os.makedirs("data/processed", exist_ok=True)
 
-    # Save separate file for each stock
-    for stock in returns.columns:
-        stock_df = returns[[stock]].copy()
-        stock_df.columns = ["Return"]
+    for stock in prices.columns:
+
+        # Ensure alignment
+        close_series = prices[stock]
+        return_series = returns[stock]
+
+        stock_df = pd.DataFrame({
+            "Close": close_series,
+            "Return": return_series
+        })
+
+        stock_df = stock_df.dropna()
 
         output_path = f"data/processed/{stock}_clean.csv"
         stock_df.to_csv(output_path)
 
         print(f"Saved: {output_path}")
-
 
 # -------------------------------
 # 5. Main Preprocessing Function
@@ -71,7 +78,7 @@ def preprocess():
 
     returns = compute_returns(prices)
 
-    save_processed_data(returns)
+    save_processed_data(prices, returns)
 
     return prices, returns
 

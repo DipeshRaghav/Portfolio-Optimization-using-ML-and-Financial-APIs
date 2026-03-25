@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 
 DATA_PATH = "data/processed"
@@ -34,7 +34,7 @@ def load_all_data():
 def create_features(data):
     """Generate ML features"""
 
-    data["MA10"] = data["Return"].rolling(window=10).mean()  
+    data["MA10"] = data["Close"].rolling(window=10).mean()
     data["Volatility"] = data["Return"].rolling(window=10).std()  
 
     data = data.dropna()  
@@ -51,7 +51,11 @@ def train_model(X, y):
         X, y, test_size=0.2, random_state=42  
     )  
 
-    model = LinearRegression()  
+    model = RandomForestRegressor(
+    n_estimators=100,
+    random_state=42
+    )
+    
     model.fit(X_train, y_train)  
 
     predictions = model.predict(X_test)  
