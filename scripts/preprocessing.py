@@ -50,27 +50,26 @@ def save_processed_data(prices, returns):
 
     os.makedirs("data/processed", exist_ok=True)
 
-    for stock in prices.columns:
+    for stock in returns.columns:
 
-        # Ensure alignment
+        # Check if stock exists in prices
+        if stock not in prices.columns:
+            print(f"Skipping {stock} (no Close data)")
+            continue
+
         close_series = prices[stock]
         return_series = returns[stock]
 
-        stock_df = pd.DataFrame({
-            "Close": close_series,
-            "Return": return_series
-        })
+        # Combine safely
+        stock_df = pd.concat([close_series, return_series], axis=1)
+        stock_df.columns = ["Close", "Return"]
 
         stock_df = stock_df.dropna()
-        # ✅ Save BOTH Close + Return
-        stock_df = pd.DataFrame({
-            "Close": prices[stock],
-            "Return": returns[stock]
-        })
 
-        # Remove NaN values
-
-        stock_df = stock_df.dropna()
+        # Skip if empty
+        if stock_df.empty:
+            print(f"Skipping {stock} (empty after cleaning)")
+            continue
 
         output_path = f"data/processed/{stock}_clean.csv"
         stock_df.to_csv(output_path)
