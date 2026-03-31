@@ -44,6 +44,17 @@ def calculate_volatility():
                     vol_data[stock] = vol
 
     return vol_data
+# ==============================
+# ADD VOLATILITY TO DATA
+# ==============================
+
+vol_dict = calculate_volatility()
+
+# Map volatility to each stock
+pred["Volatility"] = pred["Stock"].map(vol_dict)
+
+# Handle missing values
+pred["Volatility"].fillna(pred["Volatility"].mean(), inplace=True)
 
 # ==============================
 # COVARIANCE MATRIX (SIMULATED)
