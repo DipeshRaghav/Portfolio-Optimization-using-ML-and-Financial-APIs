@@ -18,7 +18,10 @@ def fetch_stock_data(start="2018-01-01", end="2024-01-01"):
         auto_adjust=True
     )
 
-    prices = data["Close"]
+    # ✅ Fix multi-index issue
+    prices = data["Close"].copy()
+    prices.columns.name = None
+
     return prices
 
 
@@ -43,7 +46,7 @@ def compute_returns(df):
 
 
 # -------------------------------
-# 4. Save Processed Data (FIXED)
+# 4. Save Processed Data
 # -------------------------------
 def save_processed_data(prices, returns):
     print("Saving processed data...")
@@ -52,7 +55,7 @@ def save_processed_data(prices, returns):
 
     for stock in returns.columns:
 
-        # Check if stock exists in prices
+        # Skip if stock missing in prices
         if stock not in prices.columns:
             print(f"Skipping {stock} (no Close data)")
             continue
@@ -66,15 +69,18 @@ def save_processed_data(prices, returns):
 
         stock_df = stock_df.dropna()
 
-        # Skip if empty
+        # Skip empty data
         if stock_df.empty:
             print(f"Skipping {stock} (empty after cleaning)")
             continue
+
+        print(f"{stock} shape:", stock_df.shape)
 
         output_path = f"data/processed/{stock}_clean.csv"
         stock_df.to_csv(output_path)
 
         print(f"Saved: {output_path}")
+
 
 # -------------------------------
 # 5. Main Preprocessing Function
@@ -82,7 +88,15 @@ def save_processed_data(prices, returns):
 def preprocess():
 
     prices = fetch_stock_data()
+
+    # ✅ Clean data
     prices = clean_data(prices)
+
+    # ✅ Ensure numeric (important for ML)
+    prices = prices.apply(pd.to_numeric, errors='coerce')
+
+    # ✅ Sort index (time order)
+    prices = prices.sort_index()
 
     returns = compute_returns(prices)
 
