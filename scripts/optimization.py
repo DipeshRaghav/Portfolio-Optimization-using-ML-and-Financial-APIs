@@ -21,13 +21,27 @@ n = len(stocks)
 def calculate_volatility():
     vol_data = {}
 
-    for file in os.listdir("data/processed"):
-        stock = file.split("_")[0]
-        df = pd.read_csv(f"data/processed/{file}")
+    data_path = "data/processed"
 
-        if "Return" in df.columns:
-            vol = df["Return"].std()
-            vol_data[stock] = vol
+    # Check if folder exists
+    if not os.path.exists(data_path):
+        print("Processed data folder not found")
+        return vol_data
+
+    for file in os.listdir(data_path):
+        if file.endswith(".csv"):  # Only read CSV files
+            stock = file.split("_")[0]
+            file_path = os.path.join(data_path, file)
+
+            df = pd.read_csv(file_path)
+
+            # Ensure 'Return' column exists
+            if "Return" in df.columns:
+                vol = df["Return"].std()
+
+                # Avoid NaN values
+                if pd.notna(vol):
+                    vol_data[stock] = vol
 
     return vol_data
 
