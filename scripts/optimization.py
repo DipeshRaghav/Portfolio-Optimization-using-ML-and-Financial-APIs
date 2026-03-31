@@ -21,15 +21,46 @@ n = len(stocks)
 def calculate_volatility():
     vol_data = {}
 
-    for file in os.listdir("data/processed"):
-        stock = file.split("_")[0]
-        df = pd.read_csv(f"data/processed/{file}")
+    data_path = "data/processed"
 
-        if "Return" in df.columns:
-            vol = df["Return"].std()
-            vol_data[stock] = vol
+    # Check if folder exists
+    if not os.path.exists(data_path):
+        print("Processed data folder not found")
+        return vol_data
+
+    for file in os.listdir(data_path):
+        if file.endswith(".csv"):  # Only read CSV files
+            stock = file.split("_")[0]
+            file_path = os.path.join(data_path, file)
+
+            df = pd.read_csv(file_path)
+
+            # Ensure 'Return' column exists
+            if "Return" in df.columns:
+                vol = df["Return"].std()
+
+                # Avoid NaN values
+                if pd.notna(vol):
+                    vol_data[stock] = vol
 
     return vol_data
+# ==============================
+# ADD VOLATILITY TO DATA
+# ==============================
+
+vol_dict = calculate_volatility()
+
+# Map volatility to each stock
+pred["Volatility"] = pred["Stock"].map(vol_dict)
+
+# Handle missing values
+pred["Volatility"].fillna(pred["Volatility"].mean(), inplace=True)
+
+# ==============================
+# RISK-ADJUSTED SCORING
+# ==============================
+
+pred["Score"] = pred["Predicted_Return"] / (pred["Volatility"] + 1e-6)
 
 # ==============================
 # COVARIANCE MATRIX (SIMULATED)
@@ -94,17 +125,27 @@ result = minimize(
 weights = result.x
 
 # ==============================
-# NORMALIZE (SAFETY)
+# SAFE NORMALIZATION
 # ==============================
-weights = weights / np.sum(weights)
+
+total_weight = np.sum(weights)
+
+if total_weight != 0:
+    weights = weights / total_weight
 
 # ==============================
 # RESULTS
 # ==============================
 portfolio = pd.DataFrame({
     "Stock": stocks,
-    "Weight": np.round(weights, 2)
+    "Weight": weights
 })
+
+# Sort by highest weight
+portfolio = portfolio.sort_values(by="Weight", ascending=False)
+
+# Round after sorting
+portfolio["Weight"] = portfolio["Weight"].round(3)
 
 port_return, port_vol = portfolio_performance(weights)
 sharpe = (port_return - risk_free_rate) / port_vol
