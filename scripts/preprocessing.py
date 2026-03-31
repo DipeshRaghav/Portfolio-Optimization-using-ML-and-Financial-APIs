@@ -7,6 +7,7 @@ PROCESSED_FOLDER = "data/processed"
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
+
 # -------------------------------
 # 1. Create processed folder
 # -------------------------------
@@ -24,41 +25,39 @@ def clean_data(df):
 
 
 # -------------------------------
-# 3. Compute returns
-# -------------------------------
-def compute_returns(df):
-    df["Return"] = df["Close"].pct_change()
-    df = df.dropna()
-    return df
-
-
-# -------------------------------
-# 4. Process single stock file
+# 3. Process single stock file
 # -------------------------------
 def process_stock(file_path):
 
     try:
         df = pd.read_csv(file_path)
 
-        # Ensure required columns exist
-        if "Close" not in df.columns:
-            logging.warning(f"Skipping {file_path} (no Close column)")
+        print(f"\nProcessing file: {file_path}")
+        print("Columns:", df.columns.tolist())
+
+        # Required columns check
+        if "Close" not in df.columns or "Date" not in df.columns:
+            logging.warning(f"Skipping {file_path} (missing Close/Date)")
             return None
 
-        # Ensure Date column
-        if "Date" not in df.columns:
-            logging.warning(f"Skipping {file_path} (no Date column)")
-            return None
+        # Convert types safely
+        df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+        df["Close"] = pd.to_numeric(df["Close"], errors="coerce")
 
-        # Convert Date
-        df["Date"] = pd.to_datetime(df["Date"])
+        df = df.dropna()
         df = df.sort_values("Date")
 
         # Keep only required columns
         df = df[["Date", "Close"]]
 
+        # Clean
         df = clean_data(df)
-        df = compute_returns(df)
+
+        # Compute return
+        df["Return"] = df["Close"].pct_change()
+        df = df.dropna()
+
+        print(f"Processed shape: {df.shape}")
 
         return df
 
@@ -68,18 +67,63 @@ def process_stock(file_path):
 
 
 # -------------------------------
-# 5. Save processed file
+# 4. Save processed file
 # -------------------------------
 def save_processed_data(stock_name, df):
 
     output_path = os.path.join(PROCESSED_FOLDER, f"{stock_name}_clean.csv")
+
     df.to_csv(output_path, index=False)
 
     logging.info(f"Saved: {output_path}")
 
 
 # -------------------------------
-# 6. Main preprocessing
+# 5. Cleanup raw folder (garbage collection)
+# -------------------------------
+def cleanup_raw_folder(max_files=10):
+
+    files = [
+        os.path.join(RAW_FOLDER, f)
+        for f in os.listdir(RAW_FOLDER)
+        if f.endswith(".csv")
+    ]
+
+    if len(files) <= max_files:
+        return
+
+    files.sort(key=os.path.getmtime)
+
+    files_to_delete = files[:-max_files]
+
+    for file in files_to_delete:
+        os.remove(file)
+        logging.info(f"Deleted old raw file: {file}")
+
+
+# -------------------------------
+# 6. Cleanup processed folder (optional)
+# -------------------------------
+def cleanup_processed_folder(max_files=10):
+
+    files = [
+        os.path.join(PROCESSED_FOLDER, f)
+        for f in os.listdir(PROCESSED_FOLDER)
+        if f.endswith(".csv")
+    ]
+
+    if len(files) <= max_files:
+        return
+
+    files.sort(key=os.path.getmtime)
+
+    for file in files[:-max_files]:
+        os.remove(file)
+        logging.info(f"Deleted old processed file: {file}")
+
+
+# -------------------------------
+# 7. Main preprocessing
 # -------------------------------
 def preprocess():
 
@@ -90,7 +134,7 @@ def preprocess():
     files = [f for f in os.listdir(RAW_FOLDER) if f.endswith(".csv")]
 
     if not files:
-        logging.warning("No raw data files found.")
+        logging.warning("No raw files found.")
         return
 
     for file in files:
@@ -102,16 +146,21 @@ def preprocess():
 
         df = process_stock(file_path)
 
-        if df is not None and not df.empty:
+        # Save only valid data
+        if df is not None and len(df) > 20:
             save_processed_data(stock_name, df)
         else:
-            logging.warning(f"Skipping {stock_name} (empty data)")
+            logging.warning(f"Skipping {stock_name} (not enough data)")
+
+    # Garbage collection
+    cleanup_raw_folder(max_files=10)
+    cleanup_processed_folder(max_files=10)
 
     logging.info("=== Preprocessing Completed ===")
 
 
 # -------------------------------
-# 7. Run
+# 8. Run
 # -------------------------------
 if __name__ == "__main__":
     preprocess()

@@ -13,17 +13,21 @@ def load_all_data():
     """Load all processed stock datasets"""
 
     all_data = []  
+    for file in os.listdir(DATA_PATH):
+        if file.endswith(".csv"):
 
-    for file in os.listdir(DATA_PATH):  
-        if file.endswith(".csv"):  
-            file_path = os.path.join(DATA_PATH, file)  
+            file_path = os.path.join(DATA_PATH, file)
 
-            df = pd.read_csv(file_path)  
+            df = pd.read_csv(file_path)
 
-            stock_name = file.split("_")[0]  
-            df["Stock"] = stock_name  
+            if "Close" not in df.columns or "Return" not in df.columns:
+                print(f"Skipping {file} (missing required columns)")
+                continue
 
-            all_data.append(df)  
+            stock_name = file.split("_")[0]
+            df["Stock"] = stock_name
+
+            all_data.append(df)
 
     combined_data = pd.concat(all_data, ignore_index=True)  
 
@@ -33,15 +37,19 @@ def load_all_data():
 
 def create_features(data):
 
-    if "Close" not in data.columns:
-        raise ValueError("Close column missing in dataset")
+    data = data.copy()
 
-    data["MA10"] = data["Close"].rolling(window=10).mean()
-    data["Volatility"] = data["Return"].rolling(window=10).std()
+    if "Close" not in data.columns or "Return" not in data.columns:
+        raise ValueError("Required columns missing (Close/Return)")
+
+    data["MA10"] = data["Close"].rolling(10).mean()
+    data["MA20"] = data["Close"].rolling(20).mean()
+    data["Volatility"] = data["Return"].rolling(10).std()
+    data["Momentum"] = data["Close"] - data["Close"].shift(10)
 
     data = data.dropna()
 
-    X = data[["MA10", "Volatility"]]
+    X = data[["MA10", "MA20", "Volatility", "Momentum"]]
     y = data["Return"]
 
     return X, y, data
@@ -78,7 +86,7 @@ def generate_predictions(model, data):
 
         stock_data = data[data["Stock"] == stock]  
 
-        X = stock_data[["MA10", "Volatility"]].iloc[-1:]  
+        X = stock_data[["MA10", "MA20", "Volatility", "Momentum"]].iloc[-1:]  
 
         predicted_return = model.predict(X)[0]  
 
