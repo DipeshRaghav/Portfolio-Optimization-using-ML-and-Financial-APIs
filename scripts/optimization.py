@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
-from scipy.optimize import minimize
+from scipy.optimize import minimize 
+import os
 
 print("Loading predicted returns...")
 
@@ -13,6 +14,22 @@ stocks = pred["Stock"].values
 returns = pred["Predicted_Return"].values
 
 n = len(stocks)
+
+# ==============================
+# CALCULATE VOLATILITY
+# ==============================
+def calculate_volatility():
+    vol_data = {}
+
+    for file in os.listdir("data/processed"):
+        stock = file.split("_")[0]
+        df = pd.read_csv(f"data/processed/{file}")
+
+        if "Return" in df.columns:
+            vol = df["Return"].std()
+            vol_data[stock] = vol
+
+    return vol_data
 
 # ==============================
 # COVARIANCE MATRIX (SIMULATED)
