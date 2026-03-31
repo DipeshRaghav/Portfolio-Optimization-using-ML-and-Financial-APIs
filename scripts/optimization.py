@@ -125,17 +125,27 @@ result = minimize(
 weights = result.x
 
 # ==============================
-# NORMALIZE (SAFETY)
+# SAFE NORMALIZATION
 # ==============================
-weights = weights / np.sum(weights)
+
+total_weight = np.sum(weights)
+
+if total_weight != 0:
+    weights = weights / total_weight
 
 # ==============================
 # RESULTS
 # ==============================
 portfolio = pd.DataFrame({
     "Stock": stocks,
-    "Weight": np.round(weights, 2)
+    "Weight": weights
 })
+
+# Sort by highest weight
+portfolio = portfolio.sort_values(by="Weight", ascending=False)
+
+# Round after sorting
+portfolio["Weight"] = portfolio["Weight"].round(3)
 
 port_return, port_vol = portfolio_performance(weights)
 sharpe = (port_return - risk_free_rate) / port_vol
