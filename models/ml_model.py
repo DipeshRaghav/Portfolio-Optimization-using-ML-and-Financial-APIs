@@ -62,7 +62,8 @@ def train_model(X, y):
     )  
 
     model = RandomForestRegressor(
-    n_estimators=100,
+    n_estimators=150,
+    max_depth=6,
     random_state=42
     )
     
@@ -78,29 +79,55 @@ def train_model(X, y):
     return model  
 
 def generate_predictions(model, data):
-    """Predict expected return for each stock"""
+    """Predict expected return for each stock with reasoning"""
 
-    predictions = []  
+    predictions = []
 
-    for stock in data["Stock"].unique():  
+    for stock in data["Stock"].unique():
 
-        stock_data = data[data["Stock"] == stock]  
+        stock_data = data[data["Stock"] == stock]
 
-        X = stock_data[["MA10", "MA20", "Volatility", "Momentum"]].iloc[-1:]  
+        X = stock_data[["MA10", "MA20", "Volatility", "Momentum"]].iloc[-1:]
 
-        predicted_return = model.predict(X)[0]  
-
+        predicted_return = model.predict(X)[0]
         current_return = stock_data["Return"].iloc[-1]
+
+        reason = []
+
+        if predicted_return > 0:
+            reason.append("Positive return expected")
+        else:
+            reason.append("Negative/low return expected")
+
+        if stock_data["Volatility"].iloc[-1] < 0.02:
+            reason.append("Low risk")
+        else:
+            reason.append("High volatility")
+
+        if stock_data["MA10"].iloc[-1] > stock_data["MA20"].iloc[-1]:
+            reason.append("Uptrend")
+        else:
+            reason.append("Downtrend")
+
+        if predicted_return > 0:
+            signal = "BUY"
+        else:
+            signal = "SELL"
+
+        reason_text = ", ".join(reason)
 
         predictions.append({
             "Stock": stock,
             "Current_Return": current_return,
-            "Predicted_Return": predicted_return
+            "Predicted_Return": predicted_return,
+            "Reason": reason_text,
+            "Signal": signal
         })
 
-    result = pd.DataFrame(predictions)  
+    result = pd.DataFrame(predictions)
+    result = result.sort_values(by="Predicted_Return", ascending=False).reset_index(drop=True)
 
-    return result  
+    return result
 
 def save_predictions(predictions):
     """Save predicted returns"""
@@ -129,6 +156,6 @@ if __name__ == "__main__":
 
     predictions = generate_predictions(model, processed_data)  
 
-    print(predictions)  
+    print(predictions.to_string(index=False))
 
     save_predictions(predictions)
