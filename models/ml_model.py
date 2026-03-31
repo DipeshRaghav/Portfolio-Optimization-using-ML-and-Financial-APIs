@@ -32,17 +32,19 @@ def load_all_data():
     return combined_data
 
 def create_features(data):
-    """Generate ML features"""
+
+    if "Close" not in data.columns:
+        raise ValueError("Close column missing in dataset")
 
     data["MA10"] = data["Close"].rolling(window=10).mean()
-    data["Volatility"] = data["Return"].rolling(window=10).std()  
+    data["Volatility"] = data["Return"].rolling(window=10).std()
 
-    data = data.dropna()  
+    data = data.dropna()
 
-    X = data[["MA10", "Volatility"]]  
-    y = data["Return"]  
+    X = data[["MA10", "Volatility"]]
+    y = data["Return"]
 
-    return X, y, data  
+    return X, y, data
 
 def train_model(X, y):
     """Train ML model"""
@@ -80,10 +82,13 @@ def generate_predictions(model, data):
 
         predicted_return = model.predict(X)[0]  
 
-        predictions.append({  
-            "Stock": stock,  
-            "Predicted_Return": predicted_return  
-        })  
+        current_return = stock_data["Return"].iloc[-1]
+
+        predictions.append({
+            "Stock": stock,
+            "Current_Return": current_return,
+            "Predicted_Return": predicted_return
+        })
 
     result = pd.DataFrame(predictions)  
 
@@ -99,22 +104,23 @@ def save_predictions(predictions):
     print("Predictions saved to:", OUTPUT_PATH)  
 
 if __name__ == "__main__":
+
     print("Loading processed datasets...")  
 
-data = load_all_data()  
+    data = load_all_data()  
 
-print("Creating ML features...")  
+    print("Creating ML features...")  
 
-X, y, processed_data = create_features(data)  
+    X, y, processed_data = create_features(data)  
 
-print("Training machine learning model...")  
+    print("Training machine learning model...")  
 
-model = train_model(X, y)  
+    model = train_model(X, y)  
 
-print("Generating predictions...")  
+    print("Generating predictions...")  
 
-predictions = generate_predictions(model, processed_data)  
+    predictions = generate_predictions(model, processed_data)  
 
-print(predictions)  
+    print(predictions)  
 
-save_predictions(predictions)
+    save_predictions(predictions)
