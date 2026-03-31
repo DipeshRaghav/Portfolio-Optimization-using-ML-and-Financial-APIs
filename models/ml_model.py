@@ -62,7 +62,8 @@ def train_model(X, y):
     )  
 
     model = RandomForestRegressor(
-    n_estimators=100,
+    n_estimators=150,
+    max_depth=6,
     random_state=42
     )
     
