@@ -117,7 +117,10 @@ def generate_predictions(model, data):
             "Reason": reason_text
         })
 
-    return pd.DataFrame(predictions)
+    result = pd.DataFrame(predictions)
+    result = result.sort_values(by="Predicted_Return", ascending=False).reset_index(drop=True)
+
+    return result
 
 def save_predictions(predictions):
     """Save predicted returns"""
