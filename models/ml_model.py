@@ -109,13 +109,19 @@ def generate_predictions(model, data):
         else:
             reason.append("Downtrend")
 
+        if predicted_return > 0:
+            signal = "BUY"
+        else:
+            signal = "SELL"
+
         reason_text = ", ".join(reason)
 
         predictions.append({
             "Stock": stock,
             "Current_Return": current_return,
             "Predicted_Return": predicted_return,
-            "Reason": reason_text
+            "Reason": reason_text,
+            "Signal": signal
         })
 
     result = pd.DataFrame(predictions)
