@@ -57,6 +57,12 @@ pred["Volatility"] = pred["Stock"].map(vol_dict)
 pred["Volatility"].fillna(pred["Volatility"].mean(), inplace=True)
 
 # ==============================
+# RISK-ADJUSTED SCORING
+# ==============================
+
+pred["Score"] = pred["Predicted_Return"] / (pred["Volatility"] + 1e-6)
+
+# ==============================
 # COVARIANCE MATRIX (SIMULATED)
 # ==============================
 cov_matrix = np.identity(n) * 0.02
