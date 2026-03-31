@@ -1,121 +1,117 @@
-import yfinance as yf
 import pandas as pd
-import numpy as np
 import os
+import logging
 
-TICKERS = ["AAPL", "MSFT", "GOOGL", "TSLA"]
+RAW_FOLDER = "data/raw"
+PROCESSED_FOLDER = "data/processed"
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 # -------------------------------
-# 1. Fetch Data
+# 1. Create processed folder
 # -------------------------------
-def fetch_stock_data(start="2018-01-01", end="2024-01-01"):
-    print("Fetching stock data...")
-
-    data = yf.download(
-        TICKERS,
-        start=start,
-        end=end,
-        auto_adjust=True
-    )
-
-    # ✅ Fix multi-index issue
-    prices = data["Close"].copy()
-    prices.columns.name = None
-
-    return prices
+def create_processed_folder():
+    os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
 
 # -------------------------------
-# 2. Clean Data
+# 2. Clean data
 # -------------------------------
 def clean_data(df):
-    print("Cleaning missing values...")
     df = df.ffill()
     df = df.bfill()
     return df
 
 
 # -------------------------------
-# 3. Compute Returns
+# 3. Compute returns
 # -------------------------------
 def compute_returns(df):
-    print("Calculating daily returns...")
-    returns = df.pct_change()
-    returns = returns.dropna()
-    return returns
+    df["Return"] = df["Close"].pct_change()
+    df = df.dropna()
+    return df
 
 
 # -------------------------------
-# 4. Save Processed Data
+# 4. Process single stock file
 # -------------------------------
-def save_processed_data(prices, returns):
-    print("Saving processed data...")
+def process_stock(file_path):
 
-    os.makedirs("data/processed", exist_ok=True)
+    try:
+        df = pd.read_csv(file_path)
 
-    for stock in returns.columns:
+        # Ensure required columns exist
+        if "Close" not in df.columns:
+            logging.warning(f"Skipping {file_path} (no Close column)")
+            return None
 
-        # Skip if stock missing in prices
-        if stock not in prices.columns:
-            print(f"Skipping {stock} (no Close data)")
-            continue
+        # Ensure Date column
+        if "Date" not in df.columns:
+            logging.warning(f"Skipping {file_path} (no Date column)")
+            return None
 
-        close_series = prices[stock]
-        return_series = returns[stock]
+        # Convert Date
+        df["Date"] = pd.to_datetime(df["Date"])
+        df = df.sort_values("Date")
 
-        # Combine safely
-        stock_df = pd.concat([close_series, return_series], axis=1)
-        stock_df.columns = ["Close", "Return"]
+        # Keep only required columns
+        df = df[["Date", "Close"]]
 
-        stock_df = stock_df.dropna()
+        df = clean_data(df)
+        df = compute_returns(df)
 
-        # Skip empty data
-        if stock_df.empty:
-            print(f"Skipping {stock} (empty after cleaning)")
-            continue
+        return df
 
-        print(f"{stock} shape:", stock_df.shape)
-
-        output_path = f"data/processed/{stock}_clean.csv"
-        stock_df.to_csv(output_path)
-
-        print(f"Saved: {output_path}")
+    except Exception as e:
+        logging.error(f"Error processing {file_path}: {e}")
+        return None
 
 
 # -------------------------------
-# 5. Main Preprocessing Function
+# 5. Save processed file
+# -------------------------------
+def save_processed_data(stock_name, df):
+
+    output_path = os.path.join(PROCESSED_FOLDER, f"{stock_name}_clean.csv")
+    df.to_csv(output_path, index=False)
+
+    logging.info(f"Saved: {output_path}")
+
+
+# -------------------------------
+# 6. Main preprocessing
 # -------------------------------
 def preprocess():
 
-    prices = fetch_stock_data()
+    logging.info("=== Preprocessing Started ===")
 
-    # ✅ Clean data
-    prices = clean_data(prices)
+    create_processed_folder()
 
-    # ✅ Ensure numeric (important for ML)
-    prices = prices.apply(pd.to_numeric, errors='coerce')
+    files = [f for f in os.listdir(RAW_FOLDER) if f.endswith(".csv")]
 
-    # ✅ Sort index (time order)
-    prices = prices.sort_index()
+    if not files:
+        logging.warning("No raw data files found.")
+        return
 
-    returns = compute_returns(prices)
+    for file in files:
 
-    save_processed_data(prices, returns)
+        stock_name = file.split(".")[0]
+        file_path = os.path.join(RAW_FOLDER, file)
 
-    return prices, returns
+        logging.info(f"Processing {stock_name}...")
+
+        df = process_stock(file_path)
+
+        if df is not None and not df.empty:
+            save_processed_data(stock_name, df)
+        else:
+            logging.warning(f"Skipping {stock_name} (empty data)")
+
+    logging.info("=== Preprocessing Completed ===")
 
 
 # -------------------------------
-# 6. Run Script
+# 7. Run
 # -------------------------------
 if __name__ == "__main__":
-
-    prices, returns = preprocess()
-
-    print("\nData Shapes")
-    print("-------------------")
-    print("Prices:", prices.shape)
-    print("Returns:", returns.shape)
-
-    print("\nSample Returns Data:")
-    print(returns.head())
+    preprocess()
