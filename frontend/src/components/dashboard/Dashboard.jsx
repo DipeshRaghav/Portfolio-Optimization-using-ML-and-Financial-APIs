@@ -1,144 +1,171 @@
 import { useState } from "react";
-import StockInput from "../stock/StockInput";
-import PortfolioOptimization from "../portfolio/PortfolioOptimization";
+import { LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { Search, User } from "lucide-react";
 
-function Dashboard() {
+const sampleData = [
+  { name: "AAPL", value: 30 },
+  { name: "MSFT", value: 25 },
+  { name: "GOOGL", value: 20 },
+  { name: "TSLA", value: 25 },
+];
 
-  const [portfolioData, setPortfolioData] = useState(null);
+const COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444"];
+
+export default function Dashboard() {
+  const [stock, setStock] = useState("");
 
   return (
+    <div className="min-h-screen bg-[#0f172a] text-white">
 
-    <div style={styles.page}>
+      {/* 🔷 NAVBAR */}
+      <div className="flex justify-between items-center px-6 py-4 bg-[#1e293b]">
+        <h1 className="text-xl font-bold">💰 SmartInvest</h1>
 
-      {/* Header */}
-      <div style={styles.header}>
-        <h1 style={styles.title}>
-          AI Portfolio Optimization
-        </h1>
+        <div className="flex items-center gap-6">
+          <p>Dashboard</p>
+          <p>Market</p>
+          <p>Portfolio</p>
+          <p>Risk</p>
+          <p>Reports</p>
+        </div>
 
-        <p style={styles.subtitle}>
-          Build smart portfolios using Machine Learning, Risk Analysis & Financial Data
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center bg-[#0f172a] px-3 py-1 rounded">
+            <Search size={16} />
+            <input
+              className="bg-transparent outline-none ml-2"
+              placeholder="Search AAPL..."
+            />
+          </div>
+          <User />
+        </div>
       </div>
 
-      {/* Stock Selection */}
-      <div style={styles.card}>
-        <h2 style={styles.sectionTitle}>
-          Stock Selection
-        </h2>
+      {/* 🔷 MAIN GRID */}
+      <div className="p-6 grid grid-cols-12 gap-6">
 
-        <StockInput setPortfolioData={setPortfolioData} />
-      </div>
+        {/* 🟢 STOCK INPUT */}
+        <div className="col-span-12 bg-[#1e293b] p-4 rounded-xl">
+          <h2 className="text-lg mb-3">Select Stocks</h2>
 
-      {/* Placeholder sections (layout ready) */}
+          <div className="flex gap-3">
+            <input
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
+              placeholder="Enter ticker (AAPL)"
+              className="bg-[#0f172a] px-4 py-2 rounded w-full"
+            />
+            <button className="bg-blue-500 px-4 py-2 rounded">
+              Analyze Portfolio
+            </button>
+          </div>
+        </div>
 
-      <div style={styles.card}>
+        {/* 📈 STOCK CHART */}
+        <div className="col-span-8 bg-[#1e293b] p-4 rounded-xl">
+          <h2 className="mb-3">Stock Price</h2>
 
-  <h2 style={styles.sectionTitle}>
-    Portfolio Optimization
-  </h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={[{x:1,y:100},{x:2,y:120},{x:3,y:110}]}>
+              <Line type="monotone" dataKey="y" stroke="#22c55e" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
 
-  <PortfolioOptimization data={portfolioData} />
+        {/* 📊 TECH INDICATORS */}
+        <div className="col-span-4 space-y-4">
+          <div className="bg-[#1e293b] p-4 rounded-xl">
+            <h3>RSI</h3>
+            <p className="text-green-400">62 (Neutral)</p>
+          </div>
 
-        <p style={styles.placeholder}>
-          Allocation chart will appear here
-        </p>
-      </div>
+          <div className="bg-[#1e293b] p-4 rounded-xl">
+            <h3>MACD</h3>
+            <p className="text-green-400">Positive</p>
+          </div>
 
-      <div style={styles.card}>
-        <h2 style={styles.sectionTitle}>
-          Risk Analysis
-        </h2>
+          <div className="bg-[#1e293b] p-4 rounded-xl">
+            <h3>MA20</h3>
+            <p className="text-green-400">Bullish</p>
+          </div>
+        </div>
 
-        <p style={styles.placeholder}>
-          Risk metrics will appear here
-        </p>
-      </div>
+        {/* 🤖 ML PREDICTIONS */}
+        <div className="col-span-6 bg-[#1e293b] p-4 rounded-xl">
+          <h2 className="mb-3">ML Predictions</h2>
 
-      <div style={styles.card}>
-        <h2 style={styles.sectionTitle}>
-          Efficient Frontier
-        </h2>
+          <table className="w-full">
+            <tbody>
+              <tr><td>AAPL</td><td className="text-green-400">+1.2%</td></tr>
+              <tr><td>MSFT</td><td className="text-green-400">+1.0%</td></tr>
+              <tr><td>TSLA</td><td className="text-red-400">-0.5%</td></tr>
+            </tbody>
+          </table>
+        </div>
 
-        <p style={styles.placeholder}>
-          Risk vs Return graph will appear here
-        </p>
-      </div>
+        {/* 🥧 PORTFOLIO */}
+        <div className="col-span-6 bg-[#1e293b] p-4 rounded-xl">
+          <h2>Portfolio Allocation</h2>
 
-      <div style={styles.card}>
-        <h2 style={styles.sectionTitle}>
-          Investment Simulation
-        </h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart>
+              <Pie data={sampleData} dataKey="value">
+                {sampleData.map((entry, index) => (
+                  <Cell key={index} fill={COLORS[index]} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
 
-        <p style={styles.placeholder}>
-          Growth projection graph will appear here
-        </p>
+        {/* 📉 RISK METRICS */}
+        <div className="col-span-4 bg-[#1e293b] p-4 rounded-xl">
+          <h3>Expected Return</h3>
+          <p className="text-green-400">12%</p>
+        </div>
+
+        <div className="col-span-4 bg-[#1e293b] p-4 rounded-xl">
+          <h3>Volatility</h3>
+          <p className="text-yellow-400">8%</p>
+        </div>
+
+        <div className="col-span-4 bg-[#1e293b] p-4 rounded-xl">
+          <h3>Sharpe Ratio</h3>
+          <p className="text-blue-400">1.45</p>
+        </div>
+
+        {/* 📊 EFFICIENT FRONTIER */}
+        <div className="col-span-6 bg-[#1e293b] p-4 rounded-xl">
+          <h2>Efficient Frontier</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={[{x:1,y:5},{x:2,y:8},{x:3,y:10}]}>
+              <Line dataKey="y" stroke="#3b82f6" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* 💰 SIMULATION */}
+        <div className="col-span-6 bg-[#1e293b] p-4 rounded-xl">
+          <h2>Investment Simulation</h2>
+
+          <input
+            placeholder="Initial Investment"
+            className="bg-[#0f172a] p-2 rounded w-full mb-2"
+          />
+
+          <input
+            placeholder="Time (years)"
+            className="bg-[#0f172a] p-2 rounded w-full mb-2"
+          />
+
+          <button className="bg-green-500 px-4 py-2 rounded w-full">
+            Simulate
+          </button>
+        </div>
+
       </div>
 
     </div>
 
   );
-
 }
-
-const styles = {
-
-  page: {
-
-    minHeight: "100vh",
-    background: "#020617",
-    padding: "40px",
-    fontFamily: "system-ui",
-    color: "white"
-
-  },
-
-  header: {
-
-    marginBottom: "40px"
-
-  },
-
-  title: {
-
-    fontSize: "34px",
-    fontWeight: "700",
-    marginBottom: "10px"
-
-  },
-
-  subtitle: {
-
-    color: "#94a3b8",
-    fontSize: "16px",
-    maxWidth: "600px"
-
-  },
-
-  card: {
-
-    background: "#020617",
-    border: "1px solid #1e293b",
-    borderRadius: "16px",
-    padding: "25px",
-    marginBottom: "25px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.4)"
-
-  },
-
-  sectionTitle: {
-
-    fontSize: "20px",
-    marginBottom: "15px"
-
-  },
-
-  placeholder: {
-
-    color: "#64748b"
-
-  }
-
-};
-
-export default Dashboard;
