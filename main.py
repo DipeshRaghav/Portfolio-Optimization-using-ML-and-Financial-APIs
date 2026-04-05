@@ -7,7 +7,8 @@ from portfolio.predictor import get_market_data, get_portfolio_optimization, get
 
 app = FastAPI()
 
-# Enable CORS (for frontend connections):
+# Enable CORS 
+#(for frontend connections)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # you can restrict this later on
