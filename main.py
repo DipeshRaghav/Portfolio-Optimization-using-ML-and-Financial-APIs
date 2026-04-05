@@ -2,13 +2,16 @@ import requests
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
+# Import custom ML/finance functions from your project
 from portfolio.predictor import get_stock_predictions
 from portfolio.predictor import get_market_data, get_portfolio_optimization, get_technical_indicators
+# Initialize FastAPI app
 
 app = FastAPI()
 
-# Enable CORS 
-#(for frontend connections)
+# -------------------- CORS CONFIGURATION --------------------
+# CORS (Cross-Origin Resource Sharing) allows frontend apps 
+# (React, Angular, etc.) to communicate with this backend API.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # you can restrict this later on
@@ -17,15 +20,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Root endpoint:
+# -------------------- ROOT ENDPOINT --------------------
+# Basic health check endpoint to verify API is running
 @app.get("/")
 def home():
     return {"message": "Portfolio ML API is running 🚀"}
 
-# Dynamic prediction endpoint
+# -------------------- STOCK PREDICTION ENDPOINT --------------------
+# Accepts a list of stock symbols and returns ML-based predictions
 @app.get("/predict")
 def predict(stocks: List[str] = Query(...)):
     try:
+         # Handle case where input is comma-separated (e.g., "AAPL,GOOG")
         if len(stocks) == 1:
             stocks = stocks[0].split(",")
         stocks = [s.upper() for s in stocks]
