@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StockSelector from "../components/stock/StockSelector";
 import StockChart from "../components/stock/StockChart";
 import TechnicalIndicators from "../components/indicators/TechnicalIndicators";
@@ -7,20 +7,30 @@ import PortfolioAllocation from "../components/portfolio/PortfolioAllocation";
 import RiskMetrics from "../components/risk/RiskMetrics";
 import EfficientFrontier from "../components/frontier/EfficientFrontier";
 import InvestmentSimulation from "../components/simulation/InvestmentSimulation";
+import { getOptimizationData } from "../services/api";
 
-export default function DashboardPage() {
-  const [selectedStocks, setSelectedStocks] = useState(["AAPL", "MSFT", "GOOGL", "TSLA", "AMZN"]);
-  const [activeStock, setActiveStock] = useState("AMZN");
+export default function DashboardPage({ selectedStocks, setSelectedStocks }) {
+  const [activeStock, setActiveStock] = useState(selectedStocks[0] || "");
   const [isLoading, setIsLoading] = useState(false);
   const [hasAnalyzed, setHasAnalyzed] = useState(true);
+  const [optimizationData, setOptimizationData] = useState(null);
 
-  const handleAnalyze = (stocks) => {
+  useEffect(() => {
+    handleAnalyze(selectedStocks);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleAnalyze = async (stocks) => {
     if (!stocks.length) return;
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setHasAnalyzed(true);
-    }, 1500);
+    
+    const optData = await getOptimizationData(stocks);
+    if (optData && !optData.error) {
+      setOptimizationData(optData);
+    }
+
+    setIsLoading(false);
+    setHasAnalyzed(true);
   };
 
   return (
@@ -62,7 +72,7 @@ export default function DashboardPage() {
 
         {/* Right: Risk Analysis */}
         <div className="lg:col-span-3">
-          <RiskMetrics />
+          <RiskMetrics data={optimizationData} />
         </div>
       </div>
 
@@ -78,8 +88,8 @@ export default function DashboardPage() {
 
       {/* ═══ ROW 3: Portfolio + Frontier + Simulation ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <PortfolioAllocation selectedStocks={selectedStocks} />
-        <EfficientFrontier />
+        <PortfolioAllocation data={optimizationData} selectedStocks={selectedStocks} />
+        <EfficientFrontier data={optimizationData} />
         <InvestmentSimulation />
       </div>
 

@@ -1,5 +1,6 @@
-import { technicalIndicators } from "../../data/mockData";
-import { Activity, BarChart2, TrendingUp, Volume2, AlertCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Activity, BarChart2, TrendingUp, Volume2, AlertCircle, Loader2 } from "lucide-react";
+import { getTechnicalData } from "../../services/api";
 
 const getRsiColor = (rsi) => {
   if (rsi >= 70) return { text: "text-red-400", label: "Overbought", bg: "bg-red-500/10" };
@@ -15,9 +16,30 @@ const getSignalColor = (signal) => {
 
 export default function TechnicalIndicators({ selectedStocks }) {
   const stock = selectedStocks[0];
-  const data = stock ? technicalIndicators[stock] : null;
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  if (!stock || !data) {
+  useEffect(() => {
+    const fetchTechs = async () => {
+      if (!stock) return;
+      setLoading(true);
+      const res = await getTechnicalData(stock);
+      setData(res);
+      setLoading(false);
+    };
+    fetchTechs();
+  }, [stock]);
+
+  if (loading) {
+    return (
+      <div className="glass-card p-6 flex flex-col items-center justify-center gap-3 min-h-[280px]">
+        <Loader2 size={24} className="animate-spin text-slate-500" />
+        <p className="text-slate-500 text-sm">Calculating...</p>
+      </div>
+    );
+  }
+
+  if (!stock || !data || data.error) {
     return (
       <div className="glass-card p-6 flex flex-col items-center justify-center gap-3 min-h-[280px]">
         <AlertCircle size={24} className="text-slate-700" />
