@@ -23,7 +23,7 @@ const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
   return <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={600}>{value}%</text>;
 };
 
-export default function PortfolioAllocation({ selectedStocks }) {
+export default function PortfolioAllocation({ selectedStocks, data: optData }) {
   const [isOptimized, setIsOptimized] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -35,7 +35,13 @@ export default function PortfolioAllocation({ selectedStocks }) {
       }))
     : defaultAllocation;
 
-  const data = isOptimized ? optimizedAllocation : baseData;
+  const realOptimizedData = optData?.allocation?.map((item, i) => ({
+    name: item.name,
+    value: Math.round(item.value),
+    color: ["#3b82f6", "#8b5cf6", "#22c55e", "#f59e0b", "#ec4899", "#06b6d4"][i % 6] || "#a855f7",
+  })) || optimizedAllocation;
+
+  const data = isOptimized ? realOptimizedData : baseData;
 
   const handleGenerate = () => {
     setIsGenerating(true);

@@ -20,6 +20,7 @@ const PAGE_MAP = {
 
 export default function App() {
   const [activePage, setActivePage] = useState("dashboard");
+  const [selectedStocks, setSelectedStocks] = useState(["AAPL", "MSFT", "GOOGL", "TSLA", "AMZN"]);
 
   const ActivePage = PAGE_MAP[activePage] ?? DashboardPage;
 
@@ -41,7 +42,7 @@ export default function App() {
 
         {/* Main Scrollable Content */}
         <main className="flex-1 overflow-y-auto">
-          <ActivePage />
+          <ActivePage selectedStocks={selectedStocks} setSelectedStocks={setSelectedStocks} />
         </main>
       </div>
     </div>

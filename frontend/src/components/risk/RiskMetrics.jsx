@@ -1,14 +1,5 @@
-import { riskMetrics } from "../../data/mockData";
-import { TrendingUp, Activity, Award, ShieldCheck, ArrowDownLeft, BarChart2 } from "lucide-react";
-
-const cards = [
-  { key: "expectedReturn", label: "Expected Return", value: `+${riskMetrics.expectedReturn}%`, icon: TrendingUp, color: "emerald", subtitle: "Annualized" },
-  { key: "volatility", label: "Volatility (σ)", value: `+${riskMetrics.volatility}%`, icon: Activity, color: "amber", subtitle: "Annualized" },
-  { key: "sharpeRatio", label: "Sharpe Ratio", value: `${riskMetrics.sharpeRatio}`, icon: Award, color: "blue", subtitle: "Risk-adjusted" },
-  { key: "sortinoRatio", label: "Sortino Ratio", value: `${riskMetrics.sortinoRatio}`, icon: ShieldCheck, color: "purple", subtitle: "Downside-adj" },
-  { key: "maxDrawdown", label: "Max Drawdown", value: `${riskMetrics.maxDrawdown}%`, icon: ArrowDownLeft, color: "red", subtitle: "Peak-to-trough" },
-  { key: "beta", label: "Portfolio Beta", value: `${riskMetrics.beta}`, icon: BarChart2, color: "cyan", subtitle: "Market corr." },
-];
+import { riskMetrics as fallbackMetrics } from "../../data/mockData";
+import { TrendingUp, Activity, Award, ShieldCheck, ArrowDownLeft, BarChart2, Loader2 } from "lucide-react";
 
 const colorMap = {
   emerald: { bg: "bg-emerald-500/8", border: "border-emerald-500/15", text: "text-emerald-400" },
@@ -19,10 +10,24 @@ const colorMap = {
   cyan: { bg: "bg-cyan-500/8", border: "border-cyan-500/15", text: "text-cyan-400" },
 };
 
-export default function RiskMetrics() {
+export default function RiskMetrics({ data }) {
+  const metrics = data || fallbackMetrics;
+  
+  const cards = [
+    { key: "expectedReturn", label: "Expected Return", value: `+${metrics.expectedReturn}%`, icon: TrendingUp, color: "emerald", subtitle: "Annualized" },
+    { key: "volatility", label: "Volatility (σ)", value: `${metrics.volatility}%`, icon: Activity, color: "amber", subtitle: "Annualized" },
+    { key: "sharpeRatio", label: "Sharpe Ratio", value: `${metrics.sharpeRatio}`, icon: Award, color: "blue", subtitle: "Risk-adjusted" },
+    { key: "sortinoRatio", label: "Sortino Ratio", value: `${metrics.sortinoRatio}`, icon: ShieldCheck, color: "purple", subtitle: "Downside-adj" },
+    { key: "maxDrawdown", label: "Max Drawdown", value: `${metrics.maxDrawdown}%`, icon: ArrowDownLeft, color: "red", subtitle: "Peak-to-trough" },
+    { key: "beta", label: "Portfolio Beta", value: `${metrics.beta}`, icon: BarChart2, color: "cyan", subtitle: "Market corr." },
+  ];
+
   return (
     <div className="glass-card p-6 h-full flex flex-col">
-      <h2 className="text-white font-semibold text-sm tracking-wide mb-5">⚡ Risk Analysis</h2>
+      <h2 className="text-white font-semibold text-sm tracking-wide mb-5 flex items-center justify-between">
+        <span>⚡ Risk Analysis</span>
+        {!data && <Loader2 size={12} className="animate-spin text-slate-500" />}
+      </h2>
 
       <div className="grid grid-cols-2 gap-3 flex-1">
         {cards.map((c) => {

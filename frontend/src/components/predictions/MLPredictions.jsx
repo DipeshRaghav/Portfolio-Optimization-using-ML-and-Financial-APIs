@@ -34,9 +34,13 @@ export default function MLPredictions({ selectedStocks }) {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const result = await getPredictions();
-        console.log("API DATA:", result);
-        setData(result || []);
+        if (!selectedStocks || selectedStocks.length === 0) {
+          setData([]);
+          return;
+        }
+        const result = await getPredictions(selectedStocks);
+        console.log("API ML DATA:", result);
+        setData(result?.predictions || []);
       } catch (error) {
         console.error("Error loading predictions:", error);
         setData([]);
@@ -46,21 +50,18 @@ export default function MLPredictions({ selectedStocks }) {
     };
 
     fetchData();
-  }, []);
+  }, [selectedStocks]);
 
   // 🔥 Transform API → UI format (SAFE)
   const formattedData = data.map((p) => ({
     stock: p.stock,
-    currentPrice: ((p.current_return ?? 0) * 100).toFixed(2),
-    predictedReturn: ((p.predicted_return ?? 0) * 100).toFixed(2),
-    signal: p.signal === "BUY" ? "Buy" : "Sell",
-    confidence: Math.floor(Math.random() * 40) + 60,
+    currentPrice: p.current_price.toFixed(2),
+    predictedReturn: p.predicted_return.toFixed(2),
+    signal: p.signal.includes("BUY") ? "Buy" : p.signal.includes("SELL") ? "Sell" : "Hold",
+    confidence: Math.floor(Math.random() * 20) + 70, // dummy confidence until we add predict_proba
   }));
 
-  const shown =
-    selectedStocks && selectedStocks.length > 0
-      ? formattedData.filter((p) => selectedStocks.includes(p.stock))
-      : formattedData.slice(0, 4);
+  const shown = formattedData;
 
   const buyCount = shown.filter((p) => p.signal === "Buy").length;
   const sellCount = shown.filter((p) => p.signal === "Sell").length;
