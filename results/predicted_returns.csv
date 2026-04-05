@@ -1,0 +1,11 @@
+Stock,Current_Return,Predicted_Return,Reason,Signal
+WIT,0.004524882484455,0.010767830824129276,"Positive return expected, High volatility, Uptrend",BUY
+GOOGL,-0.0038508883374036,0.004573514941026026,"Positive return expected, Low risk, Uptrend",BUY
+MSFT,0.0020251590567137,0.0035322293084811807,"Positive return expected, Low risk, Uptrend",BUY
+RS,0.0030040852748278,0.0019235909925404949,"Positive return expected, Low risk, Downtrend",BUY
+TSLA,-0.0185638560873999,-0.0026078958461542793,"Negative/low return expected, High volatility, Uptrend",SELL
+AMZN,0.0330755381316094,-0.0029893876963508963,"Negative/low return expected, High volatility, Downtrend",SELL
+AAPL,-0.0054241706030915,-0.003193331297219665,"Negative/low return expected, Low risk, Uptrend",SELL
+NFC1,0.0,-0.0033196821793333013,"Negative/low return expected, Low risk, Downtrend",SELL
+SBI,-0.0114942724731589,-0.0033475283762976343,"Negative/low return expected, Low risk, Downtrend",SELL
+TATATECH,-0.0559005557498207,-0.007286128716658158,"Negative/low return expected, High volatility, Downtrend",SELL
