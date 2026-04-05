@@ -46,8 +46,8 @@ export default function StockSelector({ selected, setSelected, onAnalyze, isLoad
   };
 
   return (
-    <div className="glass-card p-6 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-5">
+    <div className="glass-card p-8 h-full flex flex-col">
+      <div className="flex items-center justify-between mb-6">
         <h2 className="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
           <Search size={14} className="text-blue-400" />
           Stock Selection

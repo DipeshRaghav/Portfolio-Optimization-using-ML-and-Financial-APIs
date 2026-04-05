@@ -228,7 +228,7 @@ def get_portfolio_optimization(tickers):
 def get_technical_indicators(ticker):
     try:
         stock = yf.Ticker(ticker)
-        hist = stock.history(period="6mo")
+        hist = stock.history(period="1y")
         if hist.empty:
             return {"error": "No data"}
             
@@ -267,13 +267,24 @@ def get_technical_indicators(ticker):
         else:
             vol_trend = "Average"
             
+        # Bollinger Bands
+        std20 = close.rolling(20).std().iloc[-1]
+        bb_upper = round(ma20 + (std20 * 2), 2)
+        bb_lower = round(ma20 - (std20 * 2), 2)
+        
+        # MA 200
+        ma200 = close.rolling(200).mean().iloc[-1]
+            
         return {
             "rsi": round(current_rsi, 2),
             "macd": macd_sig,
             "macdValue": round(macd_val, 2),
             "ma20": round(ma20, 2),
             "ma50": round(ma50, 2) if not np.isnan(ma50) else round(ma20, 2),
-            "volume": vol_trend
+            "ma200": round(ma200, 2) if not np.isnan(ma200) else "N/A",
+            "volume": vol_trend,
+            "bbUpper": bb_upper,
+            "bbLower": bb_lower,
         }
     except Exception as e:
         return {"error": str(e)}
