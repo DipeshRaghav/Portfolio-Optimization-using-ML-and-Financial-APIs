@@ -96,50 +96,37 @@ def get_stock_predictions():
     return predictions
 
 
-# 🔥 MARKET DATA FUNCTION (FIXED VERSION)
+# 🔥 MARKET DATA FUNCTION (FINAL FIXED VERSION)
 def get_market_data(tickers):
     try:
-        data = yf.download(tickers, period="1mo", interval="1d")
-
-        if data.empty:
-            return {"error": "No market data found"}
-
         result = {}
 
-        # 🔥 SINGLE STOCK
-        if len(tickers) == 1:
-            ticker = tickers[0]
+        for ticker in tickers:
+            try:
+                stock = yf.Ticker(ticker)
+                hist = stock.history(period="1mo")
 
-            if "Close" not in data:
-                return {"error": f"No data for {ticker}"}
-
-            close_prices = data["Close"].dropna()
-
-            if close_prices.empty:
-                return {"error": f"No valid data for {ticker}"}
-
-            result[ticker] = {
-                "current_price": float(close_prices.iloc[-1]),
-                "history": close_prices.tail(30).tolist()
-            }
-
-        # 🔥 MULTIPLE STOCKS
-        else:
-            for ticker in tickers:
-                try:
-                    close_prices = data["Close"][ticker].dropna()
-
-                    if close_prices.empty:
-                        continue
-
-                    result[ticker] = {
-                        "current_price": float(close_prices.iloc[-1]),
-                        "history": close_prices.tail(30).tolist()
-                    }
-
-                except Exception:
-                    # skip invalid ticker safely
+                if hist.empty:
+                    print(f"No data for {ticker}")
                     continue
+
+                close_prices = hist["Close"].dropna()
+
+                if close_prices.empty:
+                    print(f"No valid close prices for {ticker}")
+                    continue
+
+                result[ticker] = {
+                    "current_price": float(close_prices.iloc[-1]),
+                    "history": close_prices.tail(30).tolist()
+                }
+
+            except Exception as e:
+                print(f"Error fetching {ticker}: {e}")
+                continue
+
+        if not result:
+            return {"error": "No market data found"}
 
         return result
 
