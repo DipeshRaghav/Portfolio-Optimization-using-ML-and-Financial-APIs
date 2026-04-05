@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+import yfinance as yf
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
@@ -22,6 +23,9 @@ def load_all_data():
             stock_name = file.split("_")[0]
             df["Stock"] = stock_name
             all_data.append(df)
+
+    if not all_data:
+        raise ValueError("No valid data files found")
 
     return pd.concat(all_data, ignore_index=True)
 
@@ -82,7 +86,7 @@ def generate_predictions(model, data):
     return sorted(predictions, key=lambda x: x["predicted_return"], reverse=True)
 
 
-# 🔥 FINAL FUNCTION (THIS IS WHAT WE NEED)
+# 🔥 FINAL ML FUNCTION
 def get_stock_predictions():
     data = load_all_data()
     X, y, processed_data = create_features(data)
@@ -91,32 +95,51 @@ def get_stock_predictions():
 
     return predictions
 
-import yfinance as yf
 
+# 🔥 MARKET DATA FUNCTION (FIXED VERSION)
 def get_market_data(tickers):
     try:
-        data = yf.download(tickers, period="1mo", interval="1d")["Close"]
+        data = yf.download(tickers, period="1mo", interval="1d")
+
+        if data.empty:
+            return {"error": "No market data found"}
 
         result = {}
 
-        # Handle single stock case
+        # 🔥 SINGLE STOCK
         if len(tickers) == 1:
             ticker = tickers[0]
-            df = data.dropna()
+
+            if "Close" not in data:
+                return {"error": f"No data for {ticker}"}
+
+            close_prices = data["Close"].dropna()
+
+            if close_prices.empty:
+                return {"error": f"No valid data for {ticker}"}
 
             result[ticker] = {
-                "current_price": float(df.iloc[-1]),
-                "history": df.tail(30).tolist()
+                "current_price": float(close_prices.iloc[-1]),
+                "history": close_prices.tail(30).tolist()
             }
 
+        # 🔥 MULTIPLE STOCKS
         else:
             for ticker in tickers:
-                df = data[ticker].dropna()
+                try:
+                    close_prices = data["Close"][ticker].dropna()
 
-                result[ticker] = {
-                    "current_price": float(df.iloc[-1]),
-                    "history": df.tail(30).tolist()
-                }
+                    if close_prices.empty:
+                        continue
+
+                    result[ticker] = {
+                        "current_price": float(close_prices.iloc[-1]),
+                        "history": close_prices.tail(30).tolist()
+                    }
+
+                except Exception:
+                    # skip invalid ticker safely
+                    continue
 
         return result
 
