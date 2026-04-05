@@ -90,3 +90,35 @@ def get_stock_predictions():
     predictions = generate_predictions(model, processed_data)
 
     return predictions
+
+import yfinance as yf
+
+def get_market_data(tickers):
+    try:
+        data = yf.download(tickers, period="1mo", interval="1d")["Close"]
+
+        result = {}
+
+        # Handle single stock case
+        if len(tickers) == 1:
+            ticker = tickers[0]
+            df = data.dropna()
+
+            result[ticker] = {
+                "current_price": float(df.iloc[-1]),
+                "history": df.tail(30).tolist()
+            }
+
+        else:
+            for ticker in tickers:
+                df = data[ticker].dropna()
+
+                result[ticker] = {
+                    "current_price": float(df.iloc[-1]),
+                    "history": df.tail(30).tolist()
+                }
+
+        return result
+
+    except Exception as e:
+        return {"error": str(e)}
