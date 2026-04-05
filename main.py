@@ -9,13 +9,13 @@ app = FastAPI()
 # Enable CORS (for frontend connection):
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # you can restrict this later
+    allow_origins=["*"],  # you can restrict this later on
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Root endpoint
+# Root endpoint:
 @app.get("/")
 def home():
     return {"message": "Portfolio ML API is running 🚀"}
