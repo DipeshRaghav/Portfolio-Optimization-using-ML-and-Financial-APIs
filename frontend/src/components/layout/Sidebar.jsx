@@ -21,22 +21,39 @@ export default function Sidebar({ activePage, setActivePage }) {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activePage === item.page;
+
           return (
             <button
               key={item.page}
               onClick={() => setActivePage(item.page)}
-              title={item.label}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 group relative ${
-                isActive
+              className={`relative group w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${isActive
                   ? "bg-blue-500/20 text-blue-400 shadow-lg shadow-blue-500/10"
                   : "text-slate-500 hover:text-slate-200 hover:bg-slate-800/60"
-              }`}
+                }`}
             >
               <Icon size={18} />
-              {/* Tooltip */}
-              <div className="absolute left-full ml-4 px-3 py-1.5 bg-[#4f46e5] text-white font-bold text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none whitespace-nowrap shadow-2xl z-[9999] drop-shadow-xl border border-[#4338ca]">
-                {item.label}
-              </div>
+<div
+  className="
+    absolute left-full top-1/2 ml-3 -translate-y-1/2
+    min-w-[96px]
+    px-4 py-3
+    rounded-lg
+    bg-slate-900 text-white text-xs font-medium
+    border border-slate-700
+    shadow-lg whitespace-nowrap
+    opacity-0 pointer-events-none
+    group-hover:opacity-100
+    transition-all duration-200
+    z-[9999]
+    flex items-center justify-center
+    text-center
+    leading-[1.25]
+  "
+>
+  {item.label}
+</div>
+
+
             </button>
           );
         })}
