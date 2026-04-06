@@ -73,10 +73,11 @@ export default function StockSelector({
         style={{
           display: "flex",
           alignItems: "center",
+          gap: "8px",
           marginBottom: "20px",
         }}
       >
-        <Search size={14} className="text-blue-400 shrink-0 mr-2" />
+        <Search size={14} className="text-blue-400 shrink-0" />
         <h2
           className="text-white font-semibold text-sm tracking-wide leading-none"
           style={{ margin: 0 }}
@@ -84,6 +85,7 @@ export default function StockSelector({
           Stock Selection
         </h2>
       </div>
+
 
       {/* Search Input + Plus Button */}
       <div
