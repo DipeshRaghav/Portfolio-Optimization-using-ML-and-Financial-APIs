@@ -36,7 +36,7 @@ export default function InvestmentSimulation() {
   const isProfit = finalValue > investment;
 
   return (
-    <div className="glass-card p-6">
+    <div className="glass-card p-8">
       <h2 className="text-white font-semibold text-sm tracking-wide mb-5 flex items-center gap-2">
         <TrendingUp size={14} className="text-blue-400" /> Investment Simulation
       </h2>

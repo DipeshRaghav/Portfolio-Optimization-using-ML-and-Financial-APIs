@@ -26,8 +26,8 @@ export default function EfficientFrontier({ data: optData }) {
   const frontierLine = optData ? randomPortfolios.slice().sort((a,b) => a.risk - b.risk) : mockFrontier;
 
   return (
-    <div className="glass-card p-6">
-      <div className="flex items-center justify-between mb-5">
+    <div className="glass-card p-8">
+      <div className="flex items-center justify-between mb-6">
         <h2 className="text-white font-semibold text-sm tracking-wide flex gap-2">
           📈 Efficient Frontier
           {!optData && <Loader2 size={12} className="animate-spin text-slate-500 mt-1" />}

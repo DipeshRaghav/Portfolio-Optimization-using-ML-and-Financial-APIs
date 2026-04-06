@@ -74,7 +74,7 @@ export default function ReportsPage({ selectedStocks }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Feature Importances Chart */}
-        <div className="lg:col-span-8 glass-card p-6">
+        <div className="lg:col-span-8 glass-card p-8">
           <div className="flex items-center gap-2 mb-6">
             <Target size={16} className="text-blue-400" />
             <h2 className="text-white font-semibold text-sm">Feature Importance Triggers</h2>
@@ -104,7 +104,7 @@ export default function ReportsPage({ selectedStocks }) {
 
         {/* Global Stats Summary */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="glass-card p-6 h-full flex flex-col justify-center">
+          <div className="glass-card p-8 h-full flex flex-col justify-center">
             <h3 className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-4">Algorithm Confidence</h3>
             <div className="text-4xl font-mono text-white mb-2 line-clamp-1 truncate text-wrap break-all">Random Forest</div>
             <p className="text-sm text-slate-400 leading-relaxed">

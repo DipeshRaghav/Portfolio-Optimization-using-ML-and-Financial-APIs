@@ -23,13 +23,13 @@ export default function RiskMetrics({ data }) {
   ];
 
   return (
-    <div className="glass-card p-6 h-full flex flex-col">
-      <h2 className="text-white font-semibold text-sm tracking-wide mb-5 flex items-center justify-between">
+    <div className="glass-card p-8 h-full flex flex-col">
+      <h2 className="text-white font-semibold text-sm tracking-wide mb-6 flex items-center justify-between">
         <span>⚡ Risk Analysis</span>
         {!data && <Loader2 size={12} className="animate-spin text-slate-500" />}
       </h2>
 
-      <div className="grid grid-cols-2 gap-3 flex-1">
+      <div className="grid grid-cols-2 gap-4 flex-1">
         {cards.map((c) => {
           const cm = colorMap[c.color];
           return (

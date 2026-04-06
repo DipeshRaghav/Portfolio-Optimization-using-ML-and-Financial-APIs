@@ -21,7 +21,7 @@ export default function PortfolioPage() {
       </div>
 
       {/* Portfolio Value */}
-      <div className="glass-card p-6">
+      <div className="glass-card p-8">
         <p className="text-slate-400 text-sm">Total Portfolio Value</p>
         <p className="text-white font-mono font-bold text-4xl mt-1">${totalValue.toLocaleString()}</p>
         <p className="text-emerald-400 text-sm font-semibold mt-2">+$2,840 (+18.4%) All Time</p>

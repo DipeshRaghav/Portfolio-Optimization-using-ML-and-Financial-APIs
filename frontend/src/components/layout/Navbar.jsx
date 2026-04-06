@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Bell, User, ChevronDown, Zap } from "lucide-react";
+import { Bell, User, ChevronDown, Zap } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", page: "dashboard" },
@@ -10,10 +10,9 @@ const navItems = [
 ];
 
 export default function Navbar({ activePage, setActivePage }) {
-  const [searchVal, setSearchVal] = useState("");
 
   return (
-    <nav className="flex items-center justify-between px-6 py-3 bg-[#0a1628]/95 border-b border-slate-800/40 backdrop-blur-xl sticky top-0 z-50">
+    <nav className="flex items-center justify-between px-6 py-3 bg-[#050810] border-b border-slate-800/40 z-[9000]">
       {/* Logo */}
       <div
         className="flex items-center gap-3 cursor-pointer select-none"
@@ -51,19 +50,7 @@ export default function Navbar({ activePage, setActivePage }) {
 
       {/* Right Controls */}
       <div className="flex items-center gap-4">
-        {/* Search */}
-        <div className="relative hidden sm:flex items-center group">
-          <Search
-            size={14}
-            className="absolute left-3 text-slate-500 group-focus-within:text-blue-400 transition-colors pointer-events-none"
-          />
-          <input
-            className="smart-input pl-9 pr-4 py-2 w-56 text-xs bg-slate-900/50"
-            placeholder="Search assets..."
-            value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value.toUpperCase())}
-          />
-        </div>
+
 
         {/* Notifications */}
         <button className="relative w-9 h-9 rounded-xl bg-slate-900/40 border border-slate-800/40 flex items-center justify-center text-slate-500 hover:text-blue-400 hover:border-blue-500/30 transition-all">

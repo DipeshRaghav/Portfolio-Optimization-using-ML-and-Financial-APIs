@@ -49,8 +49,8 @@ export default function PortfolioAllocation({ selectedStocks, data: optData }) {
   };
 
   return (
-    <div className="glass-card p-6">
-      <div className="flex items-center justify-between mb-5">
+    <div className="glass-card p-8">
+      <div className="flex items-center justify-between mb-6">
         <h2 className="text-white font-semibold text-sm tracking-wide">📊 Portfolio Allocation</h2>
         {isOptimized && (
           <button onClick={() => setIsOptimized(false)} className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors">

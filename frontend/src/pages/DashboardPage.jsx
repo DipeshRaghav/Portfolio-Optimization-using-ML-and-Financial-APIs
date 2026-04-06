@@ -6,7 +6,6 @@ import MLPredictions from "../components/predictions/MLPredictions";
 import PortfolioAllocation from "../components/portfolio/PortfolioAllocation";
 import RiskMetrics from "../components/risk/RiskMetrics";
 import EfficientFrontier from "../components/frontier/EfficientFrontier";
-import InvestmentSimulation from "../components/simulation/InvestmentSimulation";
 import { getOptimizationData } from "../services/api";
 
 export default function DashboardPage({ selectedStocks, setSelectedStocks }) {
@@ -34,10 +33,10 @@ export default function DashboardPage({ selectedStocks, setSelectedStocks }) {
   };
 
   return (
-    <div className="p-6 lg:p-8 page-fade">
+    <div className="px-12 py-10 page-fade flex flex-col gap-8">
 
       {/* ═══ ROW 1: Stock Selection + Chart + Risk ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         {/* Left: Stock Selection */}
         <div className="lg:col-span-3">
@@ -76,21 +75,20 @@ export default function DashboardPage({ selectedStocks, setSelectedStocks }) {
         </div>
       </div>
 
-      {/* ═══ ROW 2: Technical Indicators + ML Predictions ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
-        <div className="lg:col-span-3">
-          <TechnicalIndicators selectedStocks={[activeStock]} />
-        </div>
-        <div className="lg:col-span-9">
-          {hasAnalyzed && <MLPredictions selectedStocks={selectedStocks} />}
-        </div>
+      {/* ═══ ROW 2: ML Predictions ═══ */}
+      <div className="w-full">
+        {hasAnalyzed && <MLPredictions selectedStocks={selectedStocks} />}
       </div>
 
-      {/* ═══ ROW 3: Portfolio + Frontier + Simulation ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* ═══ ROW 3: Technical Indicators ═══ */}
+      <div className="w-full">
+        <TechnicalIndicators selectedStocks={[activeStock]} />
+      </div>
+
+      {/* ═══ ROW 4: Portfolio + Frontier ═══ */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PortfolioAllocation data={optimizationData} selectedStocks={selectedStocks} />
         <EfficientFrontier data={optimizationData} />
-        <InvestmentSimulation />
       </div>
 
     </div>

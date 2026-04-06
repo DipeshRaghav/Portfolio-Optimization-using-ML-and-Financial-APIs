@@ -69,14 +69,14 @@ export default function MLPredictions({ selectedStocks }) {
 
   if (loading) {
     return (
-      <div className="glass-card p-6 text-white">
+      <div className="glass-card p-8 text-white">
         Loading predictions...
       </div>
     );
   }
 
   return (
-    <div className="glass-card p-6">
+    <div className="glass-card p-8">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/15 flex items-center justify-center">

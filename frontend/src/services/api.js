@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:8000"; // Temporarily pointing to local backend instead of Render
+const BASE_URL = import.meta.env.VITE_API_URL || "https://portfolio-ml-api.onrender.com";
 
 // GET ML PREDICTIONS
 export const getPredictions = async (stocks) => {
