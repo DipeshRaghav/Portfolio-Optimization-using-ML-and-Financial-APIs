@@ -24,41 +24,70 @@ export default function RiskMetrics({ data }) {
 
   return (
     <div className="glass-card p-8 h-full flex flex-col">
-      <h2 className="text-white font-semibold text-sm tracking-wide mb-6 flex items-center justify-between">
-        <span>⚡ Risk Analysis</span>
-        {!data && <Loader2 size={12} className="animate-spin text-slate-500" />}
-      </h2>
-
-      <div className="grid grid-cols-2 gap-4 flex-1">
-        {cards.map((c) => {
-          const cm = colorMap[c.color];
-          return (
-            <div
-              key={c.key}
-              className={`${cm.bg} border ${cm.border} rounded-2xl p-4 flex flex-col justify-center transition-all duration-300 hover:scale-[1.02]`}
-            >
-              <p className={`font-mono text-xl font-extrabold ${cm.text} leading-none mb-1`}>
-                {c.value}
-              </p>
-              <p className="text-slate-300 text-[11px] font-semibold">{c.label}</p>
-              <p className="text-slate-600 text-[9px] mt-0.5">{c.subtitle}</p>
-            </div>
-          );
-        })}
+      {/* Header - Centered */}
+      <div className="flex items-center justify-center mb-8">
+        <h2 className="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
+          <span>⚡ Risk Analysis</span>
+          {!data && <Loader2 size={12} className="animate-spin text-slate-500" />}
+        </h2>
       </div>
 
-      {/* Risk Score */}
-      <div className="mt-5 pt-4 border-t border-slate-800/30">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-slate-400 text-[11px] font-semibold">Overall Risk Score</span>
-          <span className="text-amber-400 font-mono text-xs font-bold">Moderate (5.8/10)</span>
+      {/* Metrics Grid - Perfectly Centered */}
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="grid grid-cols-2 gap-6 w-full max-w-2xl">
+          {cards.map((c, index) => {
+            const cm = colorMap[c.color];
+            return (
+              <div
+                key={c.key}
+                className={`
+                  ${cm.bg} ${cm.border} rounded-2xl p-6 flex flex-col items-center justify-center 
+                  transition-all duration-300 hover:scale-[1.02] hover:shadow-xl
+                  min-h-[120px]
+                `}
+              >
+                {/* Icon */}
+                <c.icon size={20} className={`${cm.text} mb-3 opacity-80`} />
+                
+                {/* Value - Perfectly Centered */}
+                <div className="flex flex-col items-center text-center">
+                  <p className={`font-mono text-2xl lg:text-3xl font-black ${cm.text} leading-tight mb-1.5`}>
+                    {c.value}
+                  </p>
+                  <p className="text-slate-300 text-sm font-semibold leading-tight px-2">
+                    {c.label}
+                  </p>
+                  <p className="text-slate-500 text-xs uppercase tracking-wider mt-0.5">
+                    {c.subtitle}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
-        <div className="h-1.5 w-full bg-slate-800/50 rounded-full overflow-hidden flex">
-          <div className="h-full bg-emerald-500/80 w-[20%]" />
-          <div className="h-full bg-amber-500/80 w-[38%] relative">
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-lg shadow-amber-500/50 border border-amber-400" />
+      </div>
+
+      {/* Risk Score - Full Width Centered */}
+      <div className="mt-8 pt-6 border-t border-slate-800/30">
+        <div className="flex flex-col items-center gap-3">
+          {/* Title */}
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-slate-400 font-semibold">Overall Risk Score</span>
+            <span className="font-mono text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
+              Moderate (5.8/10)
+            </span>
           </div>
-          <div className="h-full bg-red-500/60 flex-1" />
+          
+          {/* Progress Bar - Perfectly Centered */}
+          <div className="w-full max-w-md bg-slate-800/50 rounded-full overflow-hidden h-2.5 shadow-inner">
+            <div className="h-full flex bg-gradient-to-r from-emerald-500/90 via-amber-500/80 to-red-500/70 rounded-full shadow-lg">
+              <div className="w-[20%] bg-emerald-500/100" />
+              <div className="w-[38%] bg-amber-500/100 relative">
+                <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg shadow-amber-500/50 border-2 border-amber-400" />
+              </div>
+              <div className="flex-1 bg-red-500/80" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
