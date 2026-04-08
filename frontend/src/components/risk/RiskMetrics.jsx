@@ -12,7 +12,7 @@ const colorMap = {
 
 export default function RiskMetrics({ data }) {
   const metrics = data || fallbackMetrics;
-  
+
   const cards = [
     { key: "expectedReturn", label: "Expected Return", value: `+${metrics.expectedReturn}%`, icon: TrendingUp, color: "emerald", subtitle: "Annualized" },
     { key: "volatility", label: "Volatility (σ)", value: `${metrics.volatility}%`, icon: Activity, color: "amber", subtitle: "Annualized" },
@@ -24,70 +24,54 @@ export default function RiskMetrics({ data }) {
 
   return (
     <div className="glass-card p-8 h-full flex flex-col">
-      {/* Header - Centered */}
-      <div className="flex items-center justify-center mb-8">
+      <div className="flex items-center justify-center mb-6">
         <h2 className="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
           <span>⚡ Risk Analysis</span>
           {!data && <Loader2 size={12} className="animate-spin text-slate-500" />}
         </h2>
       </div>
 
-      {/* Metrics Grid - Perfectly Centered */}
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="grid grid-cols-2 gap-6 w-full max-w-2xl">
-          {cards.map((c, index) => {
+      {/* Added inner padding wrapper so cards don't touch parent */}
+      <div className="flex-1 px-3 py-2">
+        <div className="grid grid-cols-2 gap-4 h-full">
+          {cards.map((c) => {
             const cm = colorMap[c.color];
             return (
               <div
                 key={c.key}
-                className={`
-                  ${cm.bg} ${cm.border} rounded-2xl p-6 flex flex-col items-center justify-center 
-                  transition-all duration-300 hover:scale-[1.02] hover:shadow-xl
-                  min-h-[120px]
-                `}
+                className={`${cm.bg} border ${cm.border} rounded-2xl px-4 py-5 flex flex-col items-center justify-center text-center min-h-[140px]`}
               >
-                {/* Icon */}
-                <c.icon size={20} className={`${cm.text} mb-3 opacity-80`} />
-                
-                {/* Value - Perfectly Centered */}
-                <div className="flex flex-col items-center text-center">
-                  <p className={`font-mono text-2xl lg:text-3xl font-black ${cm.text} leading-tight mb-1.5`}>
-                    {c.value}
-                  </p>
-                  <p className="text-slate-300 text-sm font-semibold leading-tight px-2">
-                    {c.label}
-                  </p>
-                  <p className="text-slate-500 text-xs uppercase tracking-wider mt-0.5">
-                    {c.subtitle}
-                  </p>
-                </div>
+                <c.icon size={16} className={`${cm.text} mb-2 opacity-80`} />
+
+                <p className={`font-mono text-xl lg:text-2xl font-extrabold ${cm.text} leading-none mb-2`}>
+                  {c.value}
+                </p>
+
+                <p className="text-slate-200 text-[12px] font-semibold leading-tight">
+                  {c.label}
+                </p>
+
+                <p className="text-slate-500 text-[10px] uppercase tracking-wide mt-1">
+                  {c.subtitle}
+                </p>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Risk Score - Full Width Centered */}
-      <div className="mt-8 pt-6 border-t border-slate-800/30">
-        <div className="flex flex-col items-center gap-3">
-          {/* Title */}
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-slate-400 font-semibold">Overall Risk Score</span>
-            <span className="font-mono text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
-              Moderate (5.8/10)
-            </span>
+      <div className="mt-5 pt-4 border-t border-slate-800/30 px-3">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-slate-400 text-[11px] font-semibold">Overall Risk Score</span>
+          <span className="text-amber-400 font-mono text-xs font-bold">Moderate (5.8/10)</span>
+        </div>
+
+        <div className="h-1.5 w-full bg-slate-800/50 rounded-full overflow-hidden flex">
+          <div className="h-full bg-emerald-500/80 w-[20%]" />
+          <div className="h-full bg-amber-500/80 w-[38%] relative">
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-lg shadow-amber-500/50 border border-amber-400" />
           </div>
-          
-          {/* Progress Bar - Perfectly Centered */}
-          <div className="w-full max-w-md bg-slate-800/50 rounded-full overflow-hidden h-2.5 shadow-inner">
-            <div className="h-full flex bg-gradient-to-r from-emerald-500/90 via-amber-500/80 to-red-500/70 rounded-full shadow-lg">
-              <div className="w-[20%] bg-emerald-500/100" />
-              <div className="w-[38%] bg-amber-500/100 relative">
-                <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg shadow-amber-500/50 border-2 border-amber-400" />
-              </div>
-              <div className="flex-1 bg-red-500/80" />
-            </div>
-          </div>
+          <div className="h-full bg-red-500/60 flex-1" />
         </div>
       </div>
     </div>
