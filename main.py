@@ -138,3 +138,34 @@ def multi_model_predict(
         "results": results,
         "errors": errors,
     }
+
+
+@app.get("/multi-model/full-report")
+def multi_model_full_report(
+    symbol: str = Query(..., description="Single ticker, e.g. AAPL"),
+    period: str = Query(default="2y"),
+    chart_epochs: int = Query(default=4, ge=2, le=12),
+):
+    """
+    Full Multi-AI payload for the SPA: models, ensemble, risk, news articles,
+    per-vertical reasons, price + forecast series, history triggers, SPX/VIX context.
+    """
+    p = period.lower().strip()
+    if p not in _ALLOWED_MULTIMODEL_PERIODS:
+        raise HTTPException(400, f"period must be one of: {sorted(_ALLOWED_MULTIMODEL_PERIODS)}")
+    sym = symbol.strip().upper()
+    if not sym:
+        raise HTTPException(400, "symbol required")
+
+    try:
+        from stock_predictor.full_report import run_full_report
+    except ImportError as e:
+        raise HTTPException(
+            503,
+            "Multi-model package not available on this server.",
+        ) from e
+
+    try:
+        return run_full_report(sym, period=p, chart_epochs=chart_epochs)
+    except Exception as ex:
+        raise HTTPException(500, str(ex)) from ex

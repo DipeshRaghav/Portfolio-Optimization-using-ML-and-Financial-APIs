@@ -31,6 +31,15 @@ From repo root (recommended: separate virtualenv):
 pip install -r stock_predictor/requirements.txt
 ```
 
+### Environment variables (optional, for richer news)
+
+| Variable | Purpose |
+|----------|---------|
+| `FINNHUB_API_KEY` or `FINNHUB_TOKEN` | Extra company headlines via Finnhub |
+| `NEWS_API_KEY` | NewsAPI.org backup when Yahoo/Finnhub yield few articles |
+
+Yahoo Finance `Ticker.news` is used first and requires no key. For **finance-specific NLP training**, fine-tune FinBERT (or similar) on labeled headlines; runtime inference uses general English DistilBERT unless you swap `model_name` in `sentiment_model/sentiment.py`.
+
 TensorFlow and Torch are large; for a minimal test without deep learning, temporarily comment `chart_model` usage or install CPU wheels only.
 
 ## Run full pipeline

@@ -42,7 +42,9 @@ def run_prediction_pipeline(
     out_chart = chart.predict(ohlcv)
     out_ind = indicator.predict(ohlcv)
     headlines = bundle.news_headlines or []
-    out_sent = sentiment.score_headlines(headlines if headlines else ["neutral market tone"])
+    out_sent = sentiment.score_headlines_detailed(
+        headlines if headlines else ["Neutral tone — add live headlines for richer NLP."]
+    )
     out_hist = historical.predict(ohlcv)
 
     market.fit(ohlcv, bundle.market_context)
@@ -76,7 +78,7 @@ def run_prediction_pipeline(
         "models": {
             "chart": out_chart,
             "indicator": out_ind,
-            "sentiment": {k: v for k, v in out_sent.items() if k != "raw_score"},
+            "sentiment": {k: v for k, v in out_sent.items() if k not in ("raw_score",)},
             "historical": out_hist,
             "market": out_mkt,
         },

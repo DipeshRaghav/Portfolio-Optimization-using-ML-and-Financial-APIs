@@ -137,3 +137,32 @@ export const getMultiModelPrediction = async (stocks, period = "2y", chartEpochs
     return { results: [], errors: [{ symbol: "", error: String(e.message || e) }] };
   }
 };
+
+/**
+ * Full Multi-AI report: reasons, news, price+forecast, macro series (single symbol).
+ */
+export const getMultiModelFullReport = async (symbol, period = "2y", chartEpochs = 4) => {
+  try {
+    const sym = String(symbol || "").trim().toUpperCase();
+    if (!sym) return { error: "Symbol required" };
+    const params = new URLSearchParams({
+      symbol: sym,
+      period,
+      chart_epochs: String(chartEpochs),
+    });
+    const url = `${BASE_URL}/multi-model/full-report?${params.toString()}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!res.ok) {
+      let msg = res.statusText;
+      const d = data?.detail;
+      if (typeof d === "string") msg = d;
+      else if (Array.isArray(d)) msg = d.map((x) => x.msg || x).join("; ");
+      return { error: msg };
+    }
+    return data;
+  } catch (e) {
+    console.error("full-report:", e);
+    return { error: String(e?.message || e) };
+  }
+};

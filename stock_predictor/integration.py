@@ -9,8 +9,9 @@ from __future__ import annotations
 import pandas as pd
 
 from stock_predictor.data.pipeline import DataBundle
-from stock_predictor.data.sample_data import mock_market_context_row, mock_news_headlines
+from stock_predictor.data.sample_data import mock_market_context_row
 from stock_predictor.run_pipeline import run_prediction_pipeline
+from stock_predictor.services.news_fetch import fetch_company_news
 
 
 def _normalize_ohlcv(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
@@ -80,9 +81,9 @@ def build_bundle_for_symbol(
     use_live_context: bool = True,
 ) -> DataBundle:
     ohlcv = ohlcv_from_yfinance(symbol, period=period)
-    news = mock_news_headlines(symbol)
+    headlines, _articles = fetch_company_news(symbol)
     ctx = market_context_live(seed=hash(symbol) % 10_000) if use_live_context else mock_market_context_row(42)
-    return DataBundle(symbol=symbol.upper(), ohlcv=ohlcv, news_headlines=news, market_context=ctx)
+    return DataBundle(symbol=symbol.upper(), ohlcv=ohlcv, news_headlines=headlines, market_context=ctx)
 
 
 def predict_for_symbol(
