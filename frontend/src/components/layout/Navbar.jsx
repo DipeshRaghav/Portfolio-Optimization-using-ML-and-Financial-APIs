@@ -13,19 +13,10 @@ export default function Navbar({ activePage, setActivePage }) {
   return (
     <nav
       className="
-        h-[72px] md:h-[76px]
-        bg-[#050810]/90
-        border-b border-white/[0.06]
-        backdrop-blur-xl
-        shadow-[0_1px_0_rgba(255,255,255,0.03)]
-        z-[9000]
+        z-[9000] h-[72px] border-b border-white/[0.06] bg-[#050810]/90 shadow-[0_1px_0_rgba(255,255,255,0.03)] backdrop-blur-xl md:h-[76px]
       "
-      style={{
-        paddingLeft: "24px",
-        paddingRight: "24px",
-      }}
     >
-      <div className="h-full w-full flex items-center justify-between gap-8">
+      <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between gap-4 px-4 sm:gap-8 sm:px-6 lg:px-8">
         <div
           className="flex items-center gap-3 min-w-fit shrink-0 cursor-pointer select-none"
           onClick={() => setActivePage("ma-chart")}

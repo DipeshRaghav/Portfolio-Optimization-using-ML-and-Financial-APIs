@@ -13,7 +13,7 @@ export default function MaTechnicalPage() {
   const prob = data?.models?.indicator?.prob_up;
 
   return (
-    <div className="space-y-6 p-5 pb-16 md:p-8">
+    <div className="space-y-6 py-5 pb-16 md:py-8">
       <MaPageHero
         icon={Wrench}
         accent="cyan"
