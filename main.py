@@ -24,7 +24,7 @@ app.add_middleware(
 # Basic health check endpoint to verify API is running
 @app.get("/")
 def home():
-    return {"message": "Portfolio ML API is running 🚀"}
+    return {"message": "Portfolio ML API is running"}
 
 # -------------------- STOCK PREDICTION ENDPOINT --------------------
 # Accepts a list of stock symbols and returns ML-based predictions
