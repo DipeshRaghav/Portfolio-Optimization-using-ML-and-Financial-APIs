@@ -63,33 +63,64 @@ pred["Volatility"].fillna(pred["Volatility"].mean(), inplace=True)
 pred["Score"] = pred["Predicted_Return"] / (pred["Volatility"] + 1e-6)
 
 # ==============================
-# COVARIANCE MATRIX (SIMULATED)
+# COVARIANCE MATRIX (from historical returns, annualized)
 # ==============================
-cov_matrix = np.identity(n) * 0.02
+def build_annualized_covariance(stock_list):
+    data_path = "data/processed"
+    if not os.path.isdir(data_path):
+        return None
+
+    merged = None
+    for stock in stock_list:
+        path = os.path.join(data_path, f"{stock}_clean.csv")
+        if not os.path.isfile(path):
+            return None
+        df = pd.read_csv(path, parse_dates=["Date"])
+        if "Return" not in df.columns:
+            return None
+        part = df[["Date", "Return"]].rename(columns={"Return": stock})
+        merged = part if merged is None else merged.merge(part, on="Date", how="inner")
+
+    if merged is None or len(merged) < 30:
+        return None
+
+    rets = merged[stock_list].dropna()
+    if len(rets) < 30:
+        return None
+    daily_cov = rets.cov().values
+    return daily_cov * 252
+
+
+cov_matrix = build_annualized_covariance(list(stocks))
+if cov_matrix is None:
+    print(
+        "Warning: could not build covariance from data/processed; "
+        "falling back to diagonal estimate from volatilities."
+    )
+    vol_map = pred.drop_duplicates("Stock").set_index("Stock")["Volatility"]
+    vols = np.array([vol_map[s] for s in stocks])
+    cov_matrix = np.diag(vols ** 2) * 252
 
 # ==============================
-# RISK-FREE RATE (DAILY)
+# RISK-FREE (annual, aligns with annualized covariance)
 # ==============================
-risk_free_rate = 0.01 / 252
+risk_free_annual = 0.02
 
-# ==============================
-# PORTFOLIO PERFORMANCE
-# ==============================
+
 def portfolio_performance(weights):
-    port_return = np.dot(weights, returns)
+    port_return_daily = np.dot(weights, returns)
+    port_return_annual = port_return_daily * 252
     port_vol = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
-    return port_return, port_vol
+    return port_return_annual, port_vol
 
-# ==============================
-# NEGATIVE SHARPE (MINIMIZE)
-# ==============================
+
 def negative_sharpe(weights):
-    port_return, port_vol = portfolio_performance(weights)
+    port_return_annual, port_vol = portfolio_performance(weights)
 
     if port_vol == 0:
         return 0
 
-    return -(port_return - risk_free_rate) / port_vol
+    return -(port_return_annual - risk_free_annual) / port_vol
 
 # ==============================
 # CONSTRAINTS
@@ -148,11 +179,15 @@ portfolio = portfolio.sort_values(by="Weight", ascending=False)
 portfolio["Weight"] = portfolio["Weight"].round(3)
 
 port_return, port_vol = portfolio_performance(weights)
-sharpe = (port_return - risk_free_rate) / port_vol
+sharpe = (port_return - risk_free_annual) / port_vol
 
 print("\nOptimal Portfolio Allocation:")
 print(portfolio)
 
-print(f"\nExpected Return: {port_return:.4f}")
-print(f"Volatility: {port_vol:.4f}")
+print(f"\nExpected Return (annualized): {port_return:.4f}")
+print(f"Volatility (annualized): {port_vol:.4f}")
 print(f"Sharpe Ratio: {sharpe:.4f}")
+
+os.makedirs("results", exist_ok=True)
+portfolio.to_csv("results/portfolio_weights.csv", index=False)
+print("\nSaved: results/portfolio_weights.csv")

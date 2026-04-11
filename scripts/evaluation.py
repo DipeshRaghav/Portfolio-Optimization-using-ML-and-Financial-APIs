@@ -51,8 +51,10 @@ def calculate_performance(weights, returns_df):
     expected_return = portfolio_returns.mean()
     volatility = portfolio_returns.std()
 
-    # ✅ Sharpe Ratio (Rf assumed = 0)
-    sharpe_ratio = expected_return / volatility if volatility != 0 else 0
+    risk_free_daily = 0.02 / 252
+    sharpe_ratio = (
+        (expected_return - risk_free_daily) / volatility if volatility != 0 else 0
+    )
 
     # ✅ Sortino Ratio (downside risk only)
     downside_returns = portfolio_returns[portfolio_returns < 0]

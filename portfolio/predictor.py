@@ -161,63 +161,115 @@ def get_portfolio_optimization(tickers):
     try:
         if not tickers:
             return {"error": "No tickers provided"}
-            
-        data = yf.download(tickers, period="1y", progress=False)
-        
+
+        risk_free_annual = 0.02
+        risk_free_daily = risk_free_annual / 252
+
+        data = yf.download(tickers, period="1y", progress=False, auto_adjust=True)
+
         if "Close" in data:
             data = data["Close"]
-        
+
         if isinstance(data, pd.Series):
             data = data.to_frame()
-            
-        data = data.dropna(axis=1) # Drop tickers with NaN
+
+        data = data.dropna(axis=1)
         valid_tickers = data.columns.tolist()
-        
+
         if not valid_tickers:
             return {"error": "No valid data for selected tickers"}
 
         returns = data.pct_change().dropna()
+        if returns.empty or len(returns) < 30:
+            return {"error": "Insufficient return history for optimization"}
+
         mean_returns = returns.mean() * 252
         cov_matrix = returns.cov() * 252
 
-        num_portfolios = 1000
+        num_portfolios = 5000
+        rng = np.random.default_rng(42)
         results = np.zeros((3, num_portfolios))
         weights_record = []
 
         for i in range(num_portfolios):
-            weights = np.random.random(len(valid_tickers))
+            weights = rng.random(len(valid_tickers))
             weights /= np.sum(weights)
             weights_record.append(weights)
-            
-            p_ret = np.sum(mean_returns * weights)
-            p_std = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
-            
-            results[0,i] = p_ret
-            results[1,i] = p_std
-            results[2,i] = (p_ret - 0.02) / p_std # Sharpe ratio
 
-        max_sharpe_idx = int(np.argmax(results[2]))
-        opt_weights = weights_record[max_sharpe_idx]
+            p_ret = float(np.sum(mean_returns * weights))
+            p_std = float(np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights))))
+            results[0, i] = p_ret
+            results[1, i] = p_std
+            if p_std <= 1e-12:
+                results[2, i] = -np.inf
+            else:
+                results[2, i] = (p_ret - risk_free_annual) / p_std
 
+        max_sharpe_idx = int(np.nanargmax(results[2]))
+        opt_weights = np.array(weights_record[max_sharpe_idx], dtype=float)
+
+        # Daily portfolio returns for risk metrics (use actual history, not annualized means)
+        port_daily = (returns * opt_weights).sum(axis=1)
+        downside = port_daily[port_daily < 0]
+        downside_std = float(downside.std()) if len(downside) > 0 else 0.0
+        exp_daily = float(port_daily.mean())
+        sortino = (
+            (exp_daily - risk_free_daily) / downside_std * np.sqrt(252)
+            if downside_std > 1e-12
+            else 0.0
+        )
+
+        cum = (1 + port_daily).cumprod()
+        running_max = cum.cummax()
+        drawdowns = cum / running_max - 1.0
+        max_dd = float(drawdowns.min())
+
+        # Beta vs SPY (market proxy)
+        beta_val = 1.0
+        try:
+            spy_hist = yf.download("SPY", period="1y", progress=False, auto_adjust=True)
+            if "Close" in spy_hist:
+                spy_hist = spy_hist["Close"]
+            spy_ret = spy_hist.pct_change().dropna()
+            common = returns.index.intersection(spy_ret.index)
+            if len(common) > 30:
+                pr = port_daily.loc[common].values
+                mr = spy_ret.loc[common].values
+                var_m = float(np.var(mr))
+                if var_m > 1e-12:
+                    beta_val = float(np.cov(pr, mr)[0, 1] / var_m)
+        except Exception:
+            pass
+
+        # Efficient frontier scatter: spread by volatility (not first N random samples)
         frontier_points = []
-        # Return 100 points for visually drawing the cloud
-        for i in range(100):
-            frontier_points.append({
-                "x": float(results[1, i]) * 100,
-                "y": float(results[0, i]) * 100 
-            })
+        valid_mask = results[1, :] > 1e-8
+        vols = results[1, valid_mask]
+        rets = results[0, valid_mask]
+        if len(vols) > 0:
+            order = np.argsort(vols)
+            n_pts = min(100, len(order))
+            pick = np.linspace(0, len(order) - 1, n_pts).astype(int)
+            for j in pick:
+                idx = order[j]
+                frontier_points.append(
+                    {"x": float(vols[idx]) * 100, "y": float(rets[idx]) * 100}
+                )
 
-        allocation = [{"name": t, "value": float(opt_weights[idx]) * 100} for idx, t in enumerate(valid_tickers)]
+        allocation = [
+            {"name": t, "value": float(opt_weights[idx]) * 100}
+            for idx, t in enumerate(valid_tickers)
+        ]
 
         metrics = {
             "expectedReturn": round(float(results[0, max_sharpe_idx]) * 100, 2),
             "volatility": round(float(results[1, max_sharpe_idx]) * 100, 2),
             "sharpeRatio": round(float(results[2, max_sharpe_idx]), 2),
-            "sortinoRatio": round(float(results[2, max_sharpe_idx]) * 1.3, 2),
-            "maxDrawdown": round(float(results[1, max_sharpe_idx]) * 1.5 * 100, 2),
-            "beta": round(float(np.random.normal(1.0, 0.2)), 2),
+            "sortinoRatio": round(float(sortino), 2),
+            "maxDrawdown": round(abs(max_dd) * 100, 2),
+            "beta": round(beta_val, 2),
             "allocation": allocation,
-            "frontier": frontier_points
+            "frontier": frontier_points,
         }
 
         return metrics

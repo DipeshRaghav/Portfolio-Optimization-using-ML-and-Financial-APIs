@@ -1,5 +1,6 @@
 import joblib
-from portfolio.predictor import load_all_data, create_features, train_model
+from models.ml_model import load_all_data, create_features, train_model
+
 
 def train_and_save():
     print("Loading data...")

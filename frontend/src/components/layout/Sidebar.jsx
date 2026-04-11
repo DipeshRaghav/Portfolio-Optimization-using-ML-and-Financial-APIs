@@ -1,17 +1,19 @@
 import {
-  LayoutDashboard,
-  BarChart3,
-  PieChart,
-  ShieldAlert,
-  FlaskConical,
+  CandlestickChart,
+  Wrench,
+  MessageCircle,
+  History,
+  Globe,
+  FileCheck,
 } from "lucide-react";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", page: "dashboard" },
-  { icon: BarChart3, label: "Analytics", page: "market" },
-  { icon: PieChart, label: "Portfolio", page: "portfolio" },
-  { icon: ShieldAlert, label: "Risk", page: "risk" },
-  { icon: FlaskConical, label: "Reports", page: "reports" },
+  { icon: CandlestickChart, label: "Chart AI", page: "ma-chart" },
+  { icon: Wrench, label: "Technical", page: "ma-technical" },
+  { icon: MessageCircle, label: "Sentiment", page: "ma-sentiment" },
+  { icon: History, label: "History", page: "ma-history" },
+  { icon: Globe, label: "Market", page: "ma-market" },
+  { icon: FileCheck, label: "Report", page: "ma-report" },
 ];
 
 export default function Sidebar({ activePage, setActivePage }) {
@@ -28,7 +30,7 @@ export default function Sidebar({ activePage, setActivePage }) {
               onClick={() => setActivePage(item.page)}
               className={`relative group w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
                 isActive
-                  ? "bg-blue-500/20 text-blue-400 shadow-lg shadow-blue-500/10"
+                  ? "bg-violet-500/20 text-violet-400 shadow-lg shadow-violet-500/10"
                   : "text-slate-500 hover:text-slate-200 hover:bg-slate-800/60"
               }`}
             >

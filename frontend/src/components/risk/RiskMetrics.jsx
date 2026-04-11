@@ -12,7 +12,7 @@ const colorMap = {
 
 export default function RiskMetrics({ data }) {
   const metrics = data || fallbackMetrics;
-  
+
   const cards = [
     { key: "expectedReturn", label: "Expected Return", value: `+${metrics.expectedReturn}%`, icon: TrendingUp, color: "emerald", subtitle: "Annualized" },
     { key: "volatility", label: "Volatility (σ)", value: `${metrics.volatility}%`, icon: Activity, color: "amber", subtitle: "Annualized" },
@@ -24,35 +24,48 @@ export default function RiskMetrics({ data }) {
 
   return (
     <div className="glass-card p-8 h-full flex flex-col">
-      <h2 className="text-white font-semibold text-sm tracking-wide mb-6 flex items-center justify-between">
-        <span>⚡ Risk Analysis</span>
-        {!data && <Loader2 size={12} className="animate-spin text-slate-500" />}
-      </h2>
-
-      <div className="grid grid-cols-2 gap-4 flex-1">
-        {cards.map((c) => {
-          const cm = colorMap[c.color];
-          return (
-            <div
-              key={c.key}
-              className={`${cm.bg} border ${cm.border} rounded-2xl p-4 flex flex-col justify-center transition-all duration-300 hover:scale-[1.02]`}
-            >
-              <p className={`font-mono text-xl font-extrabold ${cm.text} leading-none mb-1`}>
-                {c.value}
-              </p>
-              <p className="text-slate-300 text-[11px] font-semibold">{c.label}</p>
-              <p className="text-slate-600 text-[9px] mt-0.5">{c.subtitle}</p>
-            </div>
-          );
-        })}
+      <div className="flex items-center justify-center mb-6">
+        <h2 className="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
+          <span>⚡ Risk Analysis</span>
+          {!data && <Loader2 size={12} className="animate-spin text-slate-500" />}
+        </h2>
       </div>
 
-      {/* Risk Score */}
-      <div className="mt-5 pt-4 border-t border-slate-800/30">
+      {/* Added inner padding wrapper so cards don't touch parent */}
+      <div className="flex-1 px-3 py-2">
+        <div className="grid grid-cols-2 gap-4 h-full">
+          {cards.map((c) => {
+            const cm = colorMap[c.color];
+            return (
+              <div
+                key={c.key}
+                className={`${cm.bg} border ${cm.border} rounded-2xl px-4 py-5 flex flex-col items-center justify-center text-center min-h-[140px]`}
+              >
+                <c.icon size={16} className={`${cm.text} mb-2 opacity-80`} />
+
+                <p className={`font-mono text-xl lg:text-2xl font-extrabold ${cm.text} leading-none mb-2`}>
+                  {c.value}
+                </p>
+
+                <p className="text-slate-200 text-[12px] font-semibold leading-tight">
+                  {c.label}
+                </p>
+
+                <p className="text-slate-500 text-[10px] uppercase tracking-wide mt-1">
+                  {c.subtitle}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-5 pt-4 border-t border-slate-800/30 px-3">
         <div className="flex justify-between items-center mb-2">
           <span className="text-slate-400 text-[11px] font-semibold">Overall Risk Score</span>
           <span className="text-amber-400 font-mono text-xs font-bold">Moderate (5.8/10)</span>
         </div>
+
         <div className="h-1.5 w-full bg-slate-800/50 rounded-full overflow-hidden flex">
           <div className="h-full bg-emerald-500/80 w-[20%]" />
           <div className="h-full bg-amber-500/80 w-[38%] relative">
