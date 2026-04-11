@@ -13,6 +13,9 @@ from stock_predictor.data.sample_data import mock_market_context_row
 from stock_predictor.run_pipeline import run_prediction_pipeline
 from stock_predictor.services.news_fetch import fetch_company_news
 
+# ~6 calendar months is often 124–128 sessions; models need seq 60 + training rows (~90+).
+_MIN_OHLCV_ROWS = 110
+
 
 def _normalize_ohlcv(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
     if isinstance(df.columns, pd.MultiIndex):
@@ -42,8 +45,11 @@ def ohlcv_from_yfinance(symbol: str, period: str = "2y") -> pd.DataFrame:
     if raw is None or raw.empty:
         raise ValueError(f"No price data for {symbol}")
     df = _normalize_ohlcv(raw, symbol)
-    if len(df) < 130:
-        raise ValueError(f"Need at least ~130 trading days for multi-model features, got {len(df)}")
+    if len(df) < _MIN_OHLCV_ROWS:
+        raise ValueError(
+            f"Need at least {_MIN_OHLCV_ROWS} trading days for multi-model features, got {len(df)}. "
+            "Try period 1y or longer if this is a short history."
+        )
     return df
 
 
