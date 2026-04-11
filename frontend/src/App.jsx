@@ -26,22 +26,25 @@ export default function App() {
 
   return (
     <MultiAIProvider initialSymbol={selectedStocks[0] || "AAPL"}>
-      <div className="h-screen overflow-hidden bg-[#060a14] text-slate-200 flex flex-col">
+      <div className="flex h-screen w-full flex-col overflow-hidden bg-[#060a14] text-slate-200">
         <Navbar activePage={activePage} setActivePage={setActivePage} />
         <TickerBar />
 
-        <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div className="flex min-h-0 w-full flex-1 overflow-hidden">
           <main className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-[#050810] [scrollbar-gutter:stable]">
-            <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
+            <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden>
               <div className="absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-violet-600/[0.06] blur-[100px]" />
               <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/[0.05] blur-[100px]" />
               <div className="absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-cyan-600/[0.04] blur-[90px]" />
             </div>
-            <div
-              key={activePage}
-              className="page-fade relative z-[1] mx-auto min-h-full w-full max-w-7xl px-4 sm:px-6 lg:px-8"
-            >
-              <ActivePage />
+            {/* 1fr | content (max 80rem) | 1fr — keeps column centered regardless of scrollbar / flex quirks */}
+            <div className="relative z-[1] grid min-h-full w-full grid-cols-[1fr_min(100%,80rem)_1fr]">
+              <div
+                key={activePage}
+                className="page-fade col-start-2 min-h-full min-w-0 px-4 sm:px-6 lg:px-8"
+              >
+                <ActivePage />
+              </div>
             </div>
           </main>
         </div>
