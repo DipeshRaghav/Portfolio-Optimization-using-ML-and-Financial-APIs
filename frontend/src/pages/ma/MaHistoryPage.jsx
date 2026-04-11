@@ -14,7 +14,7 @@ export default function MaHistoryPage() {
   const prob = data?.models?.historical?.prob_up;
 
   return (
-    <div className="p-5 md:p-8 max-w-7xl mx-auto space-y-6 pb-16">
+    <div className="space-y-6 p-5 pb-16 md:p-8">
       <MaPageHero
         icon={History}
         accent="amber"

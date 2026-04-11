@@ -60,7 +60,7 @@ export default function MaReportPage() {
     histPts.length && fcPts.length ? [histPts[histPts.length - 1], ...fcPts] : fcPts;
 
   return (
-    <div className="p-5 md:p-8 max-w-7xl mx-auto space-y-6 pb-20">
+    <div className="space-y-6 p-5 pb-20 md:p-8">
       <MaPageHero
         icon={FileCheck}
         accent="fuchsia"
