@@ -1,4 +1,5 @@
 import { tickerData } from "../../data/mockData";
+import { formatInstrumentPrice } from "../../utils/priceFormat";
 import { TrendingUp, TrendingDown } from "lucide-react";
 
 export default function TickerBar() {
@@ -26,7 +27,7 @@ export default function TickerBar() {
                 {item.symbol}
               </span>
               <span className="font-mono text-[11px] font-bold text-white">
-                ${item.price.toLocaleString()}
+                {formatInstrumentPrice(item.price, item.symbol)}
               </span>
               <span
                 className={`flex items-center gap-1 text-[10px] font-extrabold ${

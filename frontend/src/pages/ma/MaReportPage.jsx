@@ -17,6 +17,7 @@ import MaEmptyState from "../../components/multimodel/MaEmptyState";
 import MaPageHero from "../../components/multimodel/MaPageHero";
 import { MaError, MaLoading } from "../../components/multimodel/MaStatus";
 import { useMultiAI } from "../../context/MultiAIContext";
+import { formatAxisPriceTick, formatInstrumentPrice } from "../../utils/priceFormat";
 
 const COLORS = ["#8b5cf6", "#3b82f6", "#10b981", "#f59e0b", "#ec4899"];
 
@@ -29,8 +30,23 @@ function signalClass(sig) {
   return "signal-hold";
 }
 
+function ReportPriceTooltip({ active, payload, label, symbol }) {
+  if (!active || !payload?.length) return null;
+  const row = payload[0];
+  const v = row?.value;
+  const seriesName = row?.name;
+  return (
+    <div className="rounded-xl border border-slate-600/80 bg-slate-950/95 px-4 py-3 shadow-xl backdrop-blur-sm">
+      <p className="mb-1 text-[10px] uppercase tracking-wider text-slate-500">{String(label)}</p>
+      <p className="font-mono text-lg text-white">{formatInstrumentPrice(v, symbol)}</p>
+      {seriesName && <p className="mt-1 text-[10px] text-slate-500">{seriesName}</p>}
+    </div>
+  );
+}
+
 export default function MaReportPage() {
-  const { data, loading } = useMultiAI();
+  const { data, loading, symbol: ctxSymbol } = useMultiAI();
+  const sym = data?.symbol || ctxSymbol || "";
   const ens = data?.ensemble;
   const breakdown = ens?.breakdown || {};
   const barData = Object.entries(breakdown).map(([name, value]) => ({
@@ -124,8 +140,13 @@ export default function MaReportPage() {
                 <LineChart data={series} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                   <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 10 }} minTickGap={28} />
-                  <YAxis domain={["auto", "auto"]} tick={{ fill: "#64748b", fontSize: 10 }} width={52} />
-                  <Tooltip contentStyle={tip} />
+                  <YAxis
+                    domain={["auto", "auto"]}
+                    tick={{ fill: "#64748b", fontSize: 10 }}
+                    width={56}
+                    tickFormatter={(v) => formatAxisPriceTick(v, sym)}
+                  />
+                  <Tooltip content={<ReportPriceTooltip symbol={sym} />} />
                   <Legend />
                   <Line
                     type="monotone"

@@ -19,17 +19,9 @@ import {
 import MaControlBar from "../../components/multimodel/MaControlBar";
 import { MaError, MaLoading } from "../../components/multimodel/MaStatus";
 import { useMultiAI } from "../../context/MultiAIContext";
+import { formatAxisPriceTick, formatInstrumentPrice } from "../../utils/priceFormat";
 
-const fmtPrice = (v) =>
-  typeof v === "number" && !Number.isNaN(v)
-    ? new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        maximumFractionDigits: 2,
-      }).format(v)
-    : "—";
-
-function ChartTooltip({ active, payload, label }) {
+function ChartTooltip({ active, payload, label, symbol }) {
   if (!active || !payload?.length) return null;
   const row = payload[0]?.payload;
   const isFc = row?.is_forecast;
@@ -37,7 +29,7 @@ function ChartTooltip({ active, payload, label }) {
   return (
     <div className="rounded-xl border border-slate-600/80 bg-slate-950/95 px-4 py-3 shadow-xl backdrop-blur-sm">
       <p className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">{String(label)}</p>
-      <p className="font-mono text-lg text-white">{fmtPrice(v)}</p>
+      <p className="font-mono text-lg text-white">{formatInstrumentPrice(v, symbol)}</p>
       <p className={`text-xs mt-1 ${isFc ? "text-violet-300" : "text-indigo-300"}`}>
         {isFc ? "Illustrative forecast" : "Historical close"}
       </p>
@@ -46,12 +38,12 @@ function ChartTooltip({ active, payload, label }) {
 }
 
 export default function MaChartPage() {
-  const { data, loading } = useMultiAI();
+  const { data, loading, symbol: ctxSymbol } = useMultiAI();
   const series = data?.chart_series || [];
   const reasons = data?.reasons?.chart || [];
   const prob = data?.models?.chart?.prob_up;
   const fh = data?.models?.chart?.meta?.forward_horizon ?? 5;
-  const sym = data?.symbol || "";
+  const sym = data?.symbol || ctxSymbol || "";
   const ens = data?.ensemble;
   const confidence = ens?.confidence;
 
@@ -161,7 +153,9 @@ export default function MaChartPage() {
                 {lastHist != null && (
                   <div className="mt-6 rounded-xl border border-white/5 bg-slate-950/50 px-3 py-2">
                     <p className="text-[10px] uppercase text-slate-500">Last close (history)</p>
-                    <p className="font-mono text-sm text-slate-200">{fmtPrice(lastHist)}</p>
+                    <p className="font-mono text-sm text-slate-200">
+                      {formatInstrumentPrice(lastHist, sym)}
+                    </p>
                   </div>
                 )}
               </div>
@@ -199,12 +193,10 @@ export default function MaChartPage() {
                       tick={{ fill: "#64748b", fontSize: 10 }}
                       tickLine={false}
                       axisLine={{ stroke: "#334155" }}
-                      tickFormatter={(v) =>
-                        v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v.toFixed?.(2) ?? v
-                      }
-                      width={52}
+                      tickFormatter={(v) => formatAxisPriceTick(v, sym)}
+                      width={56}
                     />
-                    <Tooltip content={<ChartTooltip />} />
+                    <Tooltip content={<ChartTooltip symbol={sym} />} />
                     <Legend
                       wrapperStyle={{ paddingTop: 16 }}
                       formatter={(value) => (
