@@ -5,7 +5,15 @@ export default function TickerBar() {
   const doubled = [...tickerData, ...tickerData];
 
   return (
-    <div className="bg-[#0a1628]/80 border-b border-slate-800/40 py-2.5 ticker-wrap overflow-hidden backdrop-blur-md">
+    <div className="relative bg-[#080d18]/85 border-b border-white/[0.05] py-2.5 ticker-wrap overflow-hidden backdrop-blur-md">
+      <div
+        className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-16 bg-gradient-to-r from-[#080d18] to-transparent"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-16 bg-gradient-to-l from-[#080d18] to-transparent"
+        aria-hidden
+      />
       <div className="ticker-track">
         {doubled.map((item, i) => {
           const isUp = item.change >= 0;

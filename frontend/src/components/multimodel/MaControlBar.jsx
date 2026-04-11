@@ -21,8 +21,8 @@ export default function MaControlBar() {
   } = useMultiAI();
 
   return (
-    <div className="glass-card p-4 mb-6 flex flex-col xl:flex-row xl:items-end gap-4 flex-wrap">
-      <div className="flex flex-wrap items-end gap-3 flex-1">
+    <div className="glass-card p-4 md:p-5 mb-2 flex flex-col xl:flex-row xl:items-end gap-4 flex-wrap ring-1 ring-white/[0.04]">
+      <div className="flex flex-wrap items-end gap-4 flex-1">
         <MaSymbolSearch />
         <div>
           <label className="text-slate-500 text-[10px] uppercase font-semibold tracking-wider block mb-1">
@@ -31,7 +31,7 @@ export default function MaControlBar() {
           <select
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
-            className="bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200"
+            className="rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-slate-200 shadow-inner shadow-black/20 outline-none transition focus:border-violet-500/40 focus:ring-2 focus:ring-violet-500/20"
           >
             {PERIODS.map((p) => (
               <option key={p.value} value={p.value}>
@@ -59,7 +59,7 @@ export default function MaControlBar() {
           type="button"
           onClick={refresh}
           disabled={loading}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-sm font-semibold"
+          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/20 transition hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:shadow-none"
         >
           {loading ? <Loader2 size={18} className="animate-spin" /> : <Play size={18} />}
           Run analysis

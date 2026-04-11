@@ -27,17 +27,24 @@ export default function App() {
 
   return (
     <MultiAIProvider initialSymbol={selectedStocks[0] || "AAPL"}>
-      <div className="h-screen overflow-hidden bg-[#0a0f1e] text-slate-200 flex flex-col">
+      <div className="h-screen overflow-hidden bg-[#060a14] text-slate-200 flex flex-col">
         <Navbar activePage={activePage} setActivePage={setActivePage} />
         <TickerBar />
 
-        <div className="flex flex-1 overflow-hidden">
-          <div className="hidden lg:block relative z-[9999] overflow-visible">
+        <div className="flex flex-1 min-h-0 overflow-hidden">
+          <div className="hidden lg:block relative z-[9999] shrink-0 overflow-visible">
             <Sidebar activePage={activePage} setActivePage={setActivePage} />
           </div>
 
-          <main className="flex-1 overflow-y-auto bg-[#050810] pl-12">
-            <ActivePage />
+          <main className="relative flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-[#050810]">
+            <div className="pointer-events-none fixed inset-0 lg:left-16 overflow-hidden" aria-hidden>
+              <div className="absolute -top-32 left-[15%] h-72 w-72 rounded-full bg-violet-600/[0.06] blur-[100px]" />
+              <div className="absolute top-1/2 right-0 h-96 w-96 -translate-y-1/2 rounded-full bg-indigo-600/[0.05] blur-[100px]" />
+              <div className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-cyan-600/[0.04] blur-[90px]" />
+            </div>
+            <div key={activePage} className="page-fade relative z-[1] min-h-full">
+              <ActivePage />
+            </div>
           </main>
         </div>
       </div>

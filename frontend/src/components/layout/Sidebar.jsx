@@ -18,7 +18,7 @@ const navItems = [
 
 export default function Sidebar({ activePage, setActivePage }) {
   return (
-    <aside className="w-16 bg-[#0a1628]/90 border-r border-slate-800/40 flex flex-col items-center backdrop-blur-sm h-full shrink-0 py-10 z-[100]">
+    <aside className="w-16 bg-[#080d18]/95 border-r border-white/[0.05] flex flex-col items-center backdrop-blur-xl h-full shrink-0 py-10 z-[100]">
       <div className="flex flex-col gap-4 items-center">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -30,8 +30,8 @@ export default function Sidebar({ activePage, setActivePage }) {
               onClick={() => setActivePage(item.page)}
               className={`relative group w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
                 isActive
-                  ? "bg-violet-500/20 text-violet-400 shadow-lg shadow-violet-500/10"
-                  : "text-slate-500 hover:text-slate-200 hover:bg-slate-800/60"
+                  ? "bg-violet-500/25 text-violet-300 shadow-lg shadow-violet-500/15 ring-1 ring-violet-400/25"
+                  : "text-slate-500 hover:text-slate-200 hover:bg-white/[0.06]"
               }`}
             >
               <Icon size={18} />

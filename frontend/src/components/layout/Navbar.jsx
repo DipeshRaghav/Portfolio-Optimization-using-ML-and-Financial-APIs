@@ -13,10 +13,11 @@ export default function Navbar({ activePage, setActivePage }) {
   return (
     <nav
       className="
-        h-[76px]
-        bg-[#050810]/95
-        border-b border-slate-800/50
-        backdrop-blur-md
+        h-[72px] md:h-[76px]
+        bg-[#050810]/90
+        border-b border-white/[0.06]
+        backdrop-blur-xl
+        shadow-[0_1px_0_rgba(255,255,255,0.03)]
         z-[9000]
       "
       style={{
@@ -43,8 +44,8 @@ export default function Navbar({ activePage, setActivePage }) {
           </div>
         </div>
 
-        <div className="hidden lg:flex flex-1 justify-center min-w-0 px-6">
-          <div className="flex items-center gap-1 rounded-full border border-slate-800/40 bg-slate-900/45 px-2 py-2 shadow-inner shadow-black/10 overflow-x-auto max-w-full">
+          <div className="hidden lg:flex flex-1 justify-center min-w-0 px-4">
+          <div className="flex items-center gap-1 rounded-full border border-white/[0.06] bg-slate-950/50 px-1.5 py-1.5 shadow-inner shadow-black/20 overflow-x-auto max-w-full">
             {navItems.map((item) => (
               <button
                 key={item.page}

@@ -75,7 +75,7 @@ export default function MaChartPage() {
     prob == null ? "neutral" : prob >= 0.55 ? "bullish" : prob <= 0.45 ? "bearish" : "neutral";
 
   return (
-    <div className="p-5 max-w-7xl mx-auto space-y-8 pb-16">
+    <div className="p-5 md:p-8 max-w-7xl mx-auto space-y-8 pb-16">
       {/* Hero */}
       <div className="relative overflow-hidden rounded-3xl border border-white/[0.07] bg-gradient-to-br from-slate-900/80 via-slate-900/40 to-violet-950/30 px-6 py-8 md:px-10 md:py-10">
         <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-600/20 blur-3xl" />

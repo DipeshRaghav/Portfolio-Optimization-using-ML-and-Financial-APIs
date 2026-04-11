@@ -126,7 +126,7 @@ export default function MaSymbolSearch() {
           onBlur={onBlurPanel}
           onKeyDown={onKeyDown}
           placeholder="Search ticker or company…"
-          className="w-full bg-slate-900/80 border border-slate-700 rounded-lg pl-9 pr-9 py-2 font-mono text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/40 focus:border-violet-500/50"
+          className="w-full rounded-xl border border-white/10 bg-slate-950/70 py-2.5 pl-9 pr-9 font-mono text-sm text-white shadow-inner shadow-black/20 placeholder:text-slate-600 focus:border-violet-500/40 focus:outline-none focus:ring-2 focus:ring-violet-500/25"
         />
         {loading ? (
           <Loader2
@@ -147,7 +147,7 @@ export default function MaSymbolSearch() {
         <ul
           id="symbol-search-listbox"
           role="listbox"
-          className="absolute z-50 mt-1 w-full rounded-lg border border-slate-700 bg-slate-950/95 shadow-xl backdrop-blur-sm py-1 max-h-64 overflow-auto"
+          className="absolute z-50 mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/95 py-1 shadow-2xl shadow-black/40 backdrop-blur-xl max-h-64 overflow-auto ring-1 ring-white/5"
         >
           {loading && results.length === 0 && (
             <li className="px-3 py-2 text-xs text-slate-500 flex items-center gap-2">
