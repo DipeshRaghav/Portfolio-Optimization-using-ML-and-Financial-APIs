@@ -18,8 +18,12 @@ def chart_reasons(ohlcv: pd.DataFrame, chart_out: Dict[str, Any]) -> List[str]:
     c = df["close"]
     reasons: List[str] = []
     prob = float(chart_out.get("prob_up", 0.5))
+    meta = chart_out.get("meta") or {}
+    h = int(meta.get("forward_horizon", 5))
+    nf = int(meta.get("n_features", 10))
     reasons.append(
-        f"LSTM chart model estimates P(up) ≈ {prob:.1%} from the last 60 normalized OHLCV bars."
+        f"Stacked LSTM estimates P(positive {h}-day forward return) ≈ {prob:.1%} "
+        f"from the last 60 bars × {nf} features (OHLCV + returns, range, volume z-score, per-window scaling)."
     )
     ma10 = c.rolling(10).mean().iloc[-1]
     ma20 = c.rolling(20).mean().iloc[-1]

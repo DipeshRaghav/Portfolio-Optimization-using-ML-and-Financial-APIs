@@ -24,6 +24,7 @@ export default function MaChartPage() {
       : fcPts;
   const reasons = data?.reasons?.chart || [];
   const prob = data?.models?.chart?.prob_up;
+  const fh = data?.models?.chart?.meta?.forward_horizon ?? 5;
   const sym = data?.symbol || "";
 
   return (
@@ -32,7 +33,9 @@ export default function MaChartPage() {
         <CandlestickChart className="text-violet-400" size={22} />
         <div>
           <h1 className="text-white font-bold text-xl">Chart model</h1>
-          <p className="text-slate-500 text-sm">LSTM on OHLCV windows — price path and drivers</p>
+          <p className="text-slate-500 text-sm">
+            Stacked LSTM on enriched OHLCV windows — {fh}-day forward return probability
+          </p>
         </div>
       </div>
       <MaControlBar />
@@ -44,7 +47,7 @@ export default function MaChartPage() {
           <div className="glass-card p-6">
             <div className="flex flex-wrap justify-between gap-4 mb-4">
               <div>
-                <p className="text-slate-500 text-xs uppercase font-semibold">P(price up)</p>
+                <p className="text-slate-500 text-xs uppercase font-semibold">P({fh}d forward ↑)</p>
                 <p className="text-3xl font-mono text-violet-300">{((prob ?? 0) * 100).toFixed(1)}%</p>
               </div>
               <div className="text-right">

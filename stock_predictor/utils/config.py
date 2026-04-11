@@ -36,6 +36,8 @@ class ModelConfig:
     """Shared hyperparameters and paths."""
 
     sequence_length: int = 60
+    #: Chart LSTM label: close[t+h] vs close[t] (trading days ahead).
+    chart_forward_horizon: int = 5
     random_seed: int = 42
     transaction_cost_bps: float = 10.0  # basis points per trade side
     var_confidence: float = 0.95
