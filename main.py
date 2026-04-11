@@ -72,18 +72,54 @@ def optimize_portfolio(stocks: List[str] = Query(...)):
     except Exception as e:
         return {"error": str(e)}
 
+_ALLOWED_SEARCH_TYPES = frozenset(
+    {"EQUITY", "ETF", "MUTUALFUND", "INDEX", "CRYPTOCURRENCY", "CURRENCY"}
+)
+
+
 @app.get("/search")
-def search_stock(query: str = Query(...)):
+def search_stock(query: str = Query(..., min_length=1)):
+    """
+    Yahoo Finance symbol lookup: top matches for equities, ETFs, indices, crypto, etc.
+    """
     try:
-        url = f"https://query2.finance.yahoo.com/v1/finance/search?q={query}&quotesCount=5&newsCount=0"
-        headers = {"User-Agent": "Mozilla/5.0"}
-        r = requests.get(url, headers=headers)
+        q = query.strip()
+        if not q:
+            return {"results": []}
+        url = (
+            "https://query2.finance.yahoo.com/v1/finance/search"
+            f"?q={requests.utils.quote(q)}&quotesCount=10&newsCount=0"
+        )
+        headers = {"User-Agent": "Mozilla/5.0 (compatible; PortfolioML/1.0)"}
+        r = requests.get(url, headers=headers, timeout=12)
+        r.raise_for_status()
         data = r.json()
-        quotes = data.get("quotes", [])
-        results = [{"symbol": q.get("symbol", ""), "shortname": q.get("shortname", "")} for q in quotes if q.get("quoteType") in ("EQUITY", "ETF", "MUTUALFUND", "INDEX")]
-        return {"results": results[:5]}
+        quotes = data.get("quotes") or []
+        results = []
+        for item in quotes:
+            sym = (item.get("symbol") or "").strip()
+            if not sym:
+                continue
+            qt = item.get("quoteType") or ""
+            if qt and qt not in _ALLOWED_SEARCH_TYPES:
+                continue
+            name = item.get("longname") or item.get("shortname") or item.get("symbol") or sym
+            exch = item.get("exchDisp") or item.get("exchange") or ""
+            results.append(
+                {
+                    "symbol": sym,
+                    "shortname": item.get("shortname") or "",
+                    "longname": item.get("longname") or "",
+                    "name": name,
+                    "exchange": exch,
+                    "quoteType": qt or "EQUITY",
+                }
+            )
+            if len(results) >= 5:
+                break
+        return {"results": results}
     except Exception as e:
-        return {"error": str(e)}
+        return {"error": str(e), "results": []}
 
 @app.get("/technicals")
 def get_technicals(stock: str = Query(...)):

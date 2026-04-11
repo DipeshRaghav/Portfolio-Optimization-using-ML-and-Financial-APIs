@@ -1,5 +1,6 @@
 import { Loader2, Play } from "lucide-react";
 import { useMultiAI } from "../../context/MultiAIContext";
+import MaSymbolSearch from "./MaSymbolSearch";
 
 const PERIODS = [
   { value: "6mo", label: "6M" },
@@ -10,8 +11,6 @@ const PERIODS = [
 
 export default function MaControlBar() {
   const {
-    symbol,
-    setSymbol,
     period,
     setPeriod,
     chartEpochs,
@@ -24,17 +23,7 @@ export default function MaControlBar() {
   return (
     <div className="glass-card p-4 mb-6 flex flex-col xl:flex-row xl:items-end gap-4 flex-wrap">
       <div className="flex flex-wrap items-end gap-3 flex-1">
-        <div>
-          <label className="text-slate-500 text-[10px] uppercase font-semibold tracking-wider block mb-1">
-            Symbol
-          </label>
-          <input
-            value={symbol}
-            onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-            className="bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2 font-mono text-sm text-white w-32"
-            placeholder="AAPL"
-          />
-        </div>
+        <MaSymbolSearch />
         <div>
           <label className="text-slate-500 text-[10px] uppercase font-semibold tracking-wider block mb-1">
             History
