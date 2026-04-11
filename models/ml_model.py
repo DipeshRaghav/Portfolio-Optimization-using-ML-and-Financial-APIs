@@ -49,7 +49,11 @@ def create_features(data):
 
     data = data.dropna()
 
-    X = data[["MA10", "MA20", "Volatility", "Momentum"]]
+    for col in ["PE_Ratio", "EPS_Growth", "Revenue_Growth"]:
+        if col not in data.columns:
+            data[col] = 0
+
+    X = data[["MA10", "MA20", "Volatility", "Momentum","PE_Ratio", "EPS_Growth", "Revenue_Growth"]]
     y = data["Return"]
 
     return X, y, data
@@ -87,7 +91,7 @@ def generate_predictions(model, data):
 
         stock_data = data[data["Stock"] == stock]
 
-        X = stock_data[["MA10", "MA20", "Volatility", "Momentum"]].iloc[-1:]
+        X = stock_data[["MA10", "MA20", "Volatility", "Momentum","PE_Ratio", "EPS_Growth", "Revenue_Growth"]].iloc[-1:]
 
         predicted_return = model.predict(X)[0]
         current_return = stock_data["Return"].iloc[-1]
@@ -109,8 +113,10 @@ def generate_predictions(model, data):
         else:
             reason.append("Downtrend")
 
-        if predicted_return > 0:
+        if predicted_return > 0.01:
             signal = "BUY"
+        elif predicted_return > 0:
+            signal = "HOLD"
         else:
             signal = "SELL"
 
