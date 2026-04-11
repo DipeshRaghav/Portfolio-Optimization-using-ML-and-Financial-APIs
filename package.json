@@ -1,4 +1,9 @@
 {
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && npm run build",
+    "install:frontend": "cd frontend && npm ci"
+  },
   "dependencies": {
     "lucide-react": "^1.7.0",
     "react-router-dom": "^7.14.0",
