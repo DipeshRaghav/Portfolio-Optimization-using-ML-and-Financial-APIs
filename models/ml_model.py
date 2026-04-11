@@ -94,6 +94,13 @@ def generate_predictions(model, data):
         X = stock_data[["MA10", "MA20", "Volatility", "Momentum","PE_Ratio", "EPS_Growth", "Revenue_Growth"]].iloc[-1:]
 
         predicted_return = model.predict(X)[0]
+        score = predicted_return
+
+        if stock_data["MA10"].iloc[-1] > stock_data["MA20"].iloc[-1]:
+            score += 0.01
+
+        if stock_data["Volatility"].iloc[-1] < 0.02:
+            score += 0.01
         current_return = stock_data["Return"].iloc[-1]
 
         reason = []
@@ -113,9 +120,9 @@ def generate_predictions(model, data):
         else:
             reason.append("Downtrend")
 
-        if predicted_return > 0.01:
+        if score > 0.01:
             signal = "BUY"
-        elif predicted_return > 0:
+        elif score > 0:
             signal = "HOLD"
         else:
             signal = "SELL"
@@ -126,12 +133,13 @@ def generate_predictions(model, data):
             "Stock": stock,
             "Current_Return": current_return,
             "Predicted_Return": predicted_return,
+            "Score": score,
             "Reason": reason_text,
             "Signal": signal
         })
 
     result = pd.DataFrame(predictions)
-    result = result.sort_values(by="Predicted_Return", ascending=False).reset_index(drop=True)
+    result = result.sort_values(by="Score", ascending=False).reset_index(drop=True)
 
     return result
 
