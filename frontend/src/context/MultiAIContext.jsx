@@ -14,7 +14,7 @@ export function MultiAIProvider({ children, initialSymbol = "AAPL" }) {
   const didAutoRun = useRef(false);
 
   const refresh = useCallback(async (symbolOverride) => {
-    const sym = String(symbolOverride ?? symbol || "AAPL").trim().toUpperCase();
+    const sym = String((symbolOverride ?? symbol) || "AAPL").trim().toUpperCase();
     if (!sym) return;
     setLoading(true);
     setError(null);
