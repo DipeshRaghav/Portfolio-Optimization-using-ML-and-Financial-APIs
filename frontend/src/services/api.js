@@ -141,7 +141,7 @@ export const getMultiModelPrediction = async (stocks, period = "2y", chartEpochs
 /**
  * Full Multi-AI report: reasons, news, price+forecast, macro series (single symbol).
  */
-export const getMultiModelFullReport = async (symbol, period = "2y", chartEpochs = 4) => {
+export const getMultiModelFullReport = async (symbol, period = "1y", chartEpochs = 2) => {
   try {
     const sym = String(symbol || "").trim().toUpperCase();
     if (!sym) return { error: "Symbol required" };

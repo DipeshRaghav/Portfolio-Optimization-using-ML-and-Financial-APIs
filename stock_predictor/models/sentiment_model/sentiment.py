@@ -13,6 +13,20 @@ from typing import Any, Callable, Dict, List, Optional
 import numpy as np
 
 
+def _keyword_polarity_one(headline: str) -> float:
+    pos = sum(
+        1
+        for w in ("beat", "strong", "upgrade", "growth", "positive", "gain", "bull")
+        if w in headline.lower()
+    )
+    neg = sum(
+        1
+        for w in ("miss", "weak", "downgrade", "concern", "loss", "volatile", "bear")
+        if w in headline.lower()
+    )
+    return float(np.tanh((pos - neg) / 2.0))
+
+
 def _mock_sentiment(headlines: List[str]) -> float:
     """Very rough polarity proxy for demos without heavy models."""
     pos = sum(
@@ -67,17 +81,7 @@ class SentimentTransformerModel:
         if self._use_mock or self._pipe is None:
             mode = "keyword-fallback"
             for h in headlines:
-                pos = sum(
-                    1
-                    for w in ("beat", "strong", "upgrade", "growth", "positive", "gain", "bull")
-                    if w in h.lower()
-                )
-                neg = sum(
-                    1
-                    for w in ("miss", "weak", "downgrade", "concern", "loss", "volatile", "bear")
-                    if w in h.lower()
-                )
-                pol = float(np.tanh((pos - neg) / 2.0))
+                pol = _keyword_polarity_one(h)
                 items.append(
                     {
                         "headline": h[:500],
@@ -87,24 +91,48 @@ class SentimentTransformerModel:
                 )
                 scores.append(pol)
         else:
-            for h in headlines:
-                out = self._pipe(h[:512])[0]
-                label = out["label"].lower()
-                s = float(out["score"])
-                if "pos" in label:
-                    pol = s
+            # One batched transformer call for the first N headlines; keyword fallback for the rest.
+            sent_cap = 15
+            batch_out: List[Dict[str, Any]] = []
+            if headlines:
+                primary = headlines[:sent_cap]
+                texts = [h[:512] for h in primary]
+                raw = self._pipe(texts)
+                if isinstance(raw, dict):
+                    batch_out = [raw]
                 else:
-                    pol = -s
-                pol = float(np.clip(pol, -1.0, 1.0))
-                scores.append(pol)
-                items.append(
-                    {
-                        "headline": h[:500],
-                        "label": out["label"],
-                        "polarity": pol,
-                        "model_confidence": s,
-                    }
-                )
+                    batch_out = list(raw)
+
+            for i, h in enumerate(headlines):
+                if i < sent_cap and i < len(batch_out):
+                    out = batch_out[i]
+                    label = out["label"].lower()
+                    s = float(out["score"])
+                    if "pos" in label:
+                        pol = s
+                    else:
+                        pol = -s
+                    pol = float(np.clip(pol, -1.0, 1.0))
+                    scores.append(pol)
+                    items.append(
+                        {
+                            "headline": h[:500],
+                            "label": out["label"],
+                            "polarity": pol,
+                            "model_confidence": s,
+                        }
+                    )
+                else:
+                    pol = _keyword_polarity_one(h)
+                    scores.append(pol)
+                    items.append(
+                        {
+                            "headline": h[:500],
+                            "label": "POSITIVE" if pol > 0 else "NEGATIVE",
+                            "polarity": pol,
+                            "model_mode": "keyword-extra",
+                        }
+                    )
 
         avg = float(np.mean(scores)) if scores else 0.0
         avg = float(np.clip(avg, -1.0, 1.0))

@@ -5,8 +5,8 @@ const MultiAIContext = createContext(null);
 
 export function MultiAIProvider({ children, initialSymbol = "AAPL" }) {
   const [symbol, setSymbol] = useState(initialSymbol);
-  const [period, setPeriod] = useState("2y");
-  const [chartEpochs, setChartEpochs] = useState(4);
+  const [period, setPeriod] = useState("1y");
+  const [chartEpochs, setChartEpochs] = useState(2);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

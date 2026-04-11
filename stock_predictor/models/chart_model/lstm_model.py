@@ -52,7 +52,7 @@ class ChartLSTMModel:
 
         return MLPClassifier(
             hidden_layer_sizes=(64, 32),
-            max_iter=200,
+            max_iter=120,
             random_state=ModelConfig().random_seed,
         )
 

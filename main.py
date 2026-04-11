@@ -97,7 +97,7 @@ def get_technicals(stock: str = Query(...)):
 def multi_model_predict(
     stocks: List[str] = Query(..., description="One or more tickers (comma-separated allowed)"),
     period: str = Query(default="2y", description="yfinance period: 6mo, 1y, 2y, 5y, ytd, max"),
-    chart_epochs: int = Query(default=4, ge=2, le=12, description="LSTM training epochs (lower = faster API)"),
+    chart_epochs: int = Query(default=2, ge=1, le=12, description="LSTM training epochs (lower = faster API)"),
 ):
     """
     Runs the 5-vertical stock_predictor pipeline (chart LSTM, indicators, sentiment,
@@ -144,7 +144,7 @@ def multi_model_predict(
 def multi_model_full_report(
     symbol: str = Query(..., description="Single ticker, e.g. AAPL"),
     period: str = Query(default="2y"),
-    chart_epochs: int = Query(default=4, ge=2, le=12),
+    chart_epochs: int = Query(default=2, ge=1, le=12),
 ):
     """
     Full Multi-AI payload for the SPA: models, ensemble, risk, news articles,

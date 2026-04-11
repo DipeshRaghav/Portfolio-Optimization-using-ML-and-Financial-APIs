@@ -57,7 +57,7 @@ export default function MaControlBar() {
           </label>
           <input
             type="range"
-            min={2}
+            min={1}
             max={12}
             value={chartEpochs}
             onChange={(e) => setChartEpochs(Number(e.target.value))}
