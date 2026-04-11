@@ -1,0 +1,16 @@
+# Core
+numpy>=1.26.0,<3.0.0
+pandas>=2.0.0,<3.0.0
+scikit-learn>=1.4.0,<2.0.0
+scipy>=1.11.0,<2.0.0
+
+# Models
+tensorflow>=2.15.0,<2.20.0
+xgboost>=2.0.0,<3.0.0
+transformers>=4.40.0,<5.0.0
+torch>=2.2.0,<3.0.0
+
+# API
+fastapi>=0.115.0,<0.116.0
+uvicorn[standard]>=0.32.0,<0.35.0
+pydantic>=2.0.0,<3.0.0

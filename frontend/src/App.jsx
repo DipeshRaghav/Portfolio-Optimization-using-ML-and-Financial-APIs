@@ -8,6 +8,7 @@ import PortfolioPage from "./pages/PortfolioPage";
 import RiskPage from "./pages/RiskPage";
 import ReportsPage from "./pages/ReportsPage";
 import SimulationPage from "./pages/SimulationPage";
+import MultiModelPage from "./pages/MultiModelPage";
 
 const PAGE_MAP = {
   dashboard: DashboardPage,
@@ -16,6 +17,7 @@ const PAGE_MAP = {
   risk: RiskPage,
   reports: ReportsPage,
   simulation: SimulationPage,
+  multimodel: MultiModelPage,
 };
 
 export default function App() {

@@ -5,6 +5,7 @@ import {
   ShieldAlert,
   FlaskConical,
   FileText,
+  Brain,
 } from "lucide-react";
 
 const navItems = [
@@ -12,6 +13,7 @@ const navItems = [
   { icon: BarChart3, label: "Analytics", page: "market" },
   { icon: PieChart, label: "Portfolio", page: "portfolio" },
   { icon: ShieldAlert, label: "Risk", page: "risk" },
+  { icon: Brain, label: "Multi-AI", page: "multimodel" },
   { icon: FlaskConical, label: "Simulation", page: "simulation" },
   { icon: FileText, label: "Reports", page: "reports" },
 ];

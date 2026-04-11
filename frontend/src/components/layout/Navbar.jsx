@@ -5,6 +5,7 @@ const navItems = [
   { label: "Market Analysis", page: "market" },
   { label: "Portfolio", page: "portfolio" },
   { label: "Risk Analysis", page: "risk" },
+  { label: "Multi-AI", page: "multimodel" },
   { label: "Simulation", page: "simulation" },
   { label: "Reports", page: "reports" },
 ];
