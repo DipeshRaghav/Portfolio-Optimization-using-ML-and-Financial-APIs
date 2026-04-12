@@ -1,6 +1,69 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════
+   CSS Custom Properties — DARK THEME (default)
+   ═══════════════════════════════════════════════════════════ */
+:root,
+.dark {
+  --bg-body: #050810;
+  --bg-body-alt: #060a14;
+  --bg-surface: #0a1020;
+  --bg-elevated: #0f172a;
+  --bg-navbar: rgba(5, 8, 16, 0.9);
+  --bg-ticker: rgba(8, 13, 24, 0.85);
+  --bg-card: linear-gradient(145deg, rgba(15, 20, 35, 0.72), rgba(10, 14, 24, 0.55));
+  --bg-card-hover: rgba(99, 102, 241, 0.18);
+  --bg-input: rgba(15, 23, 42, 0.5);
+  --bg-table-header: rgba(15, 23, 42, 0.4);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-input: rgba(51, 65, 85, 0.4);
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  --text-heading: #ffffff;
+  --shadow-card: 0 4px 24px -4px rgba(0, 0, 0, 0.45);
+  --shadow-card-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-card-hover: 0 12px 40px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --scrollbar-thumb: #1e293b;
+  --scrollbar-thumb-hover: #334155;
+  --glow-violet: rgba(99, 102, 241, 0.05);
+  --glow-blue: rgba(59, 130, 246, 0.05);
+  --selection-bg: rgba(99, 102, 241, 0.35);
+  --transition-theme: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  color-scheme: dark;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CSS Custom Properties — LIGHT THEME
+   ═══════════════════════════════════════════════════════════ */
+.light {
+  --bg-body: #f1f5f9;
+  --bg-body-alt: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f1f5f9;
+  --bg-navbar: rgba(255, 255, 255, 0.92);
+  --bg-ticker: rgba(248, 250, 252, 0.92);
+  --bg-card: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(241, 245, 249, 0.85));
+  --bg-card-hover: rgba(99, 102, 241, 0.08);
+  --bg-input: rgba(241, 245, 249, 0.8);
+  --bg-table-header: rgba(241, 245, 249, 0.6);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-input: rgba(203, 213, 225, 0.6);
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-heading: #0f172a;
+  --shadow-card: 0 4px 24px -4px rgba(0, 0, 0, 0.08);
+  --shadow-card-inset: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --shadow-card-hover: 0 12px 40px -8px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+  --glow-violet: rgba(99, 102, 241, 0.08);
+  --glow-blue: rgba(59, 130, 246, 0.06);
+  --selection-bg: rgba(99, 102, 241, 0.2);
+  color-scheme: light;
+}
 
 * {
   box-sizing: border-box;
@@ -15,11 +78,12 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #050810;
-  background-image: radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.05), transparent 25%),
-                    radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.05), transparent 25%);
-  color: #e2e8f0;
+  background-color: var(--bg-body);
+  background-image: radial-gradient(circle at 15% 50%, var(--glow-violet), transparent 25%),
+                    radial-gradient(circle at 85% 30%, var(--glow-blue), transparent 25%);
+  color: var(--text-primary);
   overflow-x: hidden;
+  transition: var(--transition-theme);
 }
 
 /* Custom Scrollbar */
@@ -31,32 +95,27 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: var(--scrollbar-thumb);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* ─── Glass Card ─── */
 .glass-card {
-  background: linear-gradient(145deg, rgba(15, 20, 35, 0.72), rgba(10, 14, 24, 0.55));
+  background: var(--bg-card);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
   border-radius: 20px;
-  box-shadow:
-    0 4px 24px -4px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+  box-shadow: var(--shadow-card), var(--shadow-card-inset);
+  transition: border-color 0.35s ease, box-shadow 0.35s ease, background 0.4s ease;
 }
 
 .glass-card:hover {
-  border-color: rgba(99, 102, 241, 0.18);
-  box-shadow:
-    0 12px 40px -8px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(99, 102, 241, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border-color: var(--bg-card-hover);
+  box-shadow: var(--shadow-card-hover);
 }
 
 /* ─── Gradient Text ─── */
@@ -145,8 +204,8 @@ body {
 
 /* ─── Data Table ─── */
 .data-table th {
-  background: rgba(15, 23, 42, 0.4);
-  color: #475569;
+  background: var(--bg-table-header);
+  color: var(--text-muted);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.2px;
@@ -155,8 +214,9 @@ body {
 }
 .data-table td {
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(51, 65, 85, 0.2);
+  border-bottom: 1px solid var(--border-subtle);
   font-size: 13px;
+  color: var(--text-primary);
 }
 .data-table tr:last-child td {
   border-bottom: none;
@@ -167,10 +227,10 @@ body {
 
 /* ─── Input ─── */
 .smart-input {
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(51, 65, 85, 0.4);
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
   border-radius: 12px;
-  color: #e2e8f0;
+  color: var(--text-primary);
   padding: 12px 16px;
   transition: all 0.2s ease;
   outline: none;
@@ -183,7 +243,7 @@ body {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
 }
 .smart-input::placeholder {
-  color: #334155;
+  color: var(--text-muted);
 }
 
 /* ─── Spinner ─── */
@@ -205,14 +265,14 @@ body {
   border-radius: 8px;
   font-size: 11px;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
   background: transparent;
 }
 .time-btn:hover {
-  color: #94a3b8;
+  color: var(--text-secondary);
   background: rgba(59, 130, 246, 0.06);
 }
 .time-btn.active {
@@ -262,8 +322,8 @@ body {
 }
 
 ::selection {
-  background: rgba(99, 102, 241, 0.35);
-  color: #f8fafc;
+  background: var(--selection-bg);
+  color: var(--text-heading);
 }
 
 /* ─── Recharts Overrides ─── */
@@ -272,9 +332,196 @@ body {
   stroke: rgba(51, 65, 85, 0.2) !important;
 }
 .recharts-text {
-  fill: #475569 !important;
+  fill: var(--text-muted) !important;
   font-size: 10px !important;
 }
 .recharts-tooltip-wrapper {
   outline: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LIGHT THEME — Tailwind class overrides
+   We target `.light` on <html> and remap common dark patterns
+   so that every component gets a light version automatically.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Body / Shell backgrounds ── */
+.light .bg-\[\#050810\],
+.light .bg-\[\#060a14\],
+.light .bg-\[\#080d18\]\/85,
+.light .bg-\[\#0a1628\] {
+  background-color: var(--bg-body) !important;
+}
+
+/* Navbar */
+.light .bg-\[\#050810\]\/90 {
+  background-color: var(--bg-navbar) !important;
+}
+
+/* ── Slate backgrounds → white/gray ── */
+.light .bg-slate-950\/50,
+.light .bg-slate-950\/60,
+.light .bg-slate-950\/70,
+.light .bg-slate-950\/40,
+.light .bg-slate-950\/30,
+.light .bg-slate-950 {
+  background-color: rgba(241, 245, 249, 0.7) !important;
+}
+.light .bg-slate-900\/45,
+.light .bg-slate-900\/40,
+.light .bg-slate-900\/50,
+.light .bg-slate-900\/90 {
+  background-color: rgba(226, 232, 240, 0.6) !important;
+}
+.light .bg-slate-800\/80,
+.light .bg-slate-800\/50,
+.light .bg-slate-800\/45,
+.light .bg-slate-800 {
+  background-color: rgba(203, 213, 225, 0.4) !important;
+}
+
+/* ── Text color overrides ── */
+.light .text-white {
+  color: var(--text-heading) !important;
+}
+.light .text-slate-200,
+.light .text-slate-300 {
+  color: var(--text-primary) !important;
+}
+.light .text-slate-400 {
+  color: var(--text-secondary) !important;
+}
+.light .text-slate-500 {
+  color: var(--text-muted) !important;
+}
+.light .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+/* ── Border overrides ── */
+.light .border-white\/\[0\.06\],
+.light .border-white\/\[0\.04\],
+.light .border-white\/\[0\.05\],
+.light .border-white\/5,
+.light .border-white\/10 {
+  border-color: var(--border-subtle) !important;
+}
+.light .border-slate-800\/45,
+.light .border-slate-800\/30,
+.light .border-slate-700\/40,
+.light .border-slate-700 {
+  border-color: rgba(203, 213, 225, 0.5) !important;
+}
+
+/* ── Ring overrides ── */
+.light .ring-white\/5,
+.light .ring-white\/\[0\.04\],
+.light .ring-white\/\[0\.06\] {
+  --tw-ring-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ── Shadow overrides for light ── */
+.light .shadow-inner.shadow-black\/20 {
+  --tw-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* ── Background overlays ── */
+.light .bg-white\/\[0\.02\],
+.light .bg-white\/\[0\.03\],
+.light .bg-white\/\[0\.015\],
+.light .bg-white\/\[0\.04\],
+.light .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+/* ── Ticker bar ── */
+.light .ticker-wrap {
+  background-color: var(--bg-ticker) !important;
+  border-bottom-color: var(--border-subtle) !important;
+}
+
+/* ── Ticker edge fades ── */
+.light .from-\[\#080d18\] {
+  --tw-gradient-from: #f1f5f9 !important;
+}
+.light .to-transparent {
+  --tw-gradient-to: transparent !important;
+}
+
+/* ── Ambient glow orbs in light mode ── */
+.light .bg-violet-600\/\[0\.06\],
+.light .bg-indigo-600\/\[0\.05\],
+.light .bg-cyan-600\/\[0\.04\] {
+  opacity: 0.3;
+}
+
+/* ── Font recolor for mono text in ticker ── */
+.light .font-mono.text-white {
+  color: var(--text-heading) !important;
+}
+
+/* ── Navbar nav pill bar ── */
+.light .bg-slate-950\/50 {
+  background-color: rgba(241, 245, 249, 0.7) !important;
+}
+
+/* ── Dropdown / search results ── */
+.light .bg-slate-950\/95 {
+  background-color: rgba(255, 255, 255, 0.97) !important;
+}
+
+/* ── Active nav button in light ── */
+.light .bg-violet-500\/18 {
+  background-color: rgba(139, 92, 246, 0.12) !important;
+}
+
+/* ── Glass card gradients for hero areas ── */
+.light .from-slate-900\/90 {
+  --tw-gradient-from: rgba(241, 245, 249, 0.95) !important;
+}
+.light .via-slate-900\/50 {
+  --tw-gradient-via: rgba(248, 250, 252, 0.7) !important;
+}
+.light .to-slate-950\/80 {
+  --tw-gradient-to: rgba(241, 245, 249, 0.9) !important;
+}
+
+/* ── Hero gradient overrides ── */
+.light .from-violet-950\/40 {
+  --tw-gradient-from: rgba(237, 233, 254, 0.4) !important;
+}
+.light .to-indigo-950\/30 {
+  --tw-gradient-to: rgba(224, 231, 255, 0.3) !important;
+}
+
+/* ── Recharts in light ── */
+.light .recharts-cartesian-grid-horizontal line,
+.light .recharts-cartesian-grid-vertical line {
+  stroke: rgba(203, 213, 225, 0.4) !important;
+}
+.light .recharts-text {
+  fill: var(--text-muted) !important;
+}
+
+/* ── Smooth transition on all theme-affected elements ── */
+.light *,
+.dark * {
+  transition: background-color 0.3s ease, color 0.2s ease, border-color 0.3s ease;
+}
+/* Exclude animated elements from doing double-animations */
+.ticker-track,
+.ticker-track *,
+.animate-spin,
+.animate-pulse {
+  transition: none !important;
+}
+
+/* ── Theme toggle button animation ── */
+@keyframes theme-pop {
+  0% { transform: scale(0.8) rotate(-15deg); }
+  50% { transform: scale(1.15) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+.theme-toggle-enter {
+  animation: theme-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }

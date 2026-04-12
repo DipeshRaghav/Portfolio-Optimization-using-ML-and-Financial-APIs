@@ -1,4 +1,5 @@
-import { Bell, User, ChevronDown, Zap } from "lucide-react";
+import { Bell, User, ChevronDown, Zap, Sun, Moon } from "lucide-react";
+import { useTheme } from "../../context/ThemeContext";
 
 const navItems = [
   { label: "Chart AI", page: "ma-chart" },
@@ -10,6 +11,8 @@ const navItems = [
 ];
 
 export default function Navbar({ activePage, setActivePage }) {
+  const { isDark, toggle } = useTheme();
+
   return (
     <nav
       className="
@@ -54,6 +57,25 @@ export default function Navbar({ activePage, setActivePage }) {
         </div>
 
         <div className="flex items-center gap-3 shrink-0 pr-1">
+          {/* ─── Theme Toggle ─── */}
+          <button
+            onClick={toggle}
+            aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+            title={isDark ? "Light mode" : "Dark mode"}
+            className="relative w-10 h-10 rounded-xl bg-slate-900/45 border border-slate-800/45 flex items-center justify-center text-slate-400 hover:text-amber-400 hover:border-amber-500/30 hover:bg-slate-800/50 transition-all duration-300 overflow-hidden"
+          >
+            <div
+              key={isDark ? "moon" : "sun"}
+              className="theme-toggle-enter"
+            >
+              {isDark ? (
+                <Sun size={16} className="text-amber-400" />
+              ) : (
+                <Moon size={16} className="text-indigo-500" />
+              )}
+            </div>
+          </button>
+
           <button className="relative w-10 h-10 rounded-xl bg-slate-900/45 border border-slate-800/45 flex items-center justify-center text-slate-500 hover:text-violet-400 hover:border-violet-500/30 hover:bg-slate-800/50 transition-all duration-200">
             <Bell size={16} />
             <span className="absolute top-2 right-2 w-2 h-2 bg-violet-500 rounded-full border-2 border-[#0a1628]"></span>
