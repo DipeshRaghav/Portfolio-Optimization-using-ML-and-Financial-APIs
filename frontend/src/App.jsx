@@ -37,11 +37,11 @@ export default function App() {
               <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/[0.05] blur-[100px]" />
               <div className="absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-cyan-600/[0.04] blur-[90px]" />
             </div>
-            {/* 1fr | content (max 80rem) | 1fr — keeps column centered regardless of scrollbar / flex quirks */}
-            <div className="relative z-[1] grid min-h-full w-full grid-cols-[1fr_min(100%,80rem)_1fr]">
+            {/* 1fr | content (max 100rem) | 1fr — keeps column centered, fills wide screens */}
+            <div className="relative z-[1] grid min-h-full w-full grid-cols-[1fr_min(100%,100rem)_1fr]">
               <div
                 key={activePage}
-                className="page-fade col-start-2 min-h-full min-w-0 px-4 sm:px-6 lg:px-8"
+                className="page-fade col-start-2 min-h-full min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16"
               >
                 <ActivePage />
               </div>

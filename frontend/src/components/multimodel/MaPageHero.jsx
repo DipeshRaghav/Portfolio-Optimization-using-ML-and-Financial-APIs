@@ -1,5 +1,5 @@
 /**
- * Consistent page header for Multi-AI routes (accent + gradient title).
+ * Full-width page hero with generous padding, accent glow, and optional action slot.
  */
 const ACCENTS = {
   violet: {
@@ -44,36 +44,46 @@ export default function MaPageHero({
   icon: Icon,
   accent = "violet",
   badge,
+  tagline,
   title,
   highlight,
   subtitle,
+  action,
 }) {
   const a = ACCENTS[accent] || ACCENTS.violet;
   const hasHighlight = Boolean(highlight && title.includes(highlight));
   const i = hasHighlight ? title.indexOf(highlight) : -1;
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-gradient-to-br from-slate-900/90 via-slate-900/50 to-slate-950/80 px-6 py-7 md:px-9 md:py-8">
+    <div className="relative w-full overflow-hidden rounded-3xl border border-white/[0.06] bg-gradient-to-br from-slate-900/90 via-slate-900/50 to-slate-950/80 px-10 py-10 md:px-14 md:py-12 lg:px-16 lg:py-14">
+      {/* Ambient glow orbs */}
       <div
-        className={`pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full ${a.glow} blur-3xl`}
+        className={`pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full ${a.glow} blur-[120px]`}
       />
-      <div className="relative flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div className="space-y-3">
+      <div
+        className={`pointer-events-none absolute -left-20 bottom-0 h-48 w-48 rounded-full ${a.glow} opacity-30 blur-[100px]`}
+      />
+
+      <div className="relative flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+        {/* ─── Left: icon + title block ─── */}
+        <div className="min-w-0 space-y-5">
           {badge && (
             <div
-              className={`inline-flex w-fit items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-wider ${a.chip}`}
+              className={`inline-flex w-fit items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-wider ${a.chip}`}
             >
               {badge}
             </div>
           )}
-          <div className="flex items-start gap-3">
+
+          <div className="flex items-start gap-5">
             <div
-              className={`mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ring-1 ${a.iconWrap}`}
+              className={`mt-1 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ring-1 ${a.iconWrap}`}
             >
-              {Icon && <Icon className={a.icon} size={22} aria-hidden />}
+              {Icon && <Icon className={a.icon} size={28} aria-hidden />}
             </div>
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-white md:text-2xl">
+
+            <div className="min-w-0 space-y-3">
+              <h1 className="text-3xl font-extrabold tracking-tight text-white md:text-4xl">
                 {hasHighlight ? (
                   <>
                     {title.slice(0, i)}
@@ -84,12 +94,26 @@ export default function MaPageHero({
                   title
                 )}
               </h1>
+
+              {tagline && (
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  {tagline}
+                </p>
+              )}
+
               {subtitle && (
-                <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-slate-400">{subtitle}</p>
+                <p className="max-w-2xl text-[15px] leading-relaxed text-slate-400/90">
+                  {subtitle}
+                </p>
               )}
             </div>
           </div>
         </div>
+
+        {/* ─── Right: optional action slot ─── */}
+        {action && (
+          <div className="shrink-0 self-start md:self-center">{action}</div>
+        )}
       </div>
     </div>
   );
