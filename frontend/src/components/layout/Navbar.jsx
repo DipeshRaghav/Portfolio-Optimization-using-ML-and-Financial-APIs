@@ -19,9 +19,10 @@ export default function Navbar({ activePage, setActivePage }) {
         z-[9000] h-[72px] border-b border-white/[0.06] bg-[#050810]/90 shadow-[0_1px_0_rgba(255,255,255,0.03)] backdrop-blur-xl md:h-[76px]
       "
     >
-      <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between gap-4 px-4 sm:gap-8 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Left Side */}
         <div
-          className="flex items-center gap-3 min-w-fit shrink-0 cursor-pointer select-none"
+          className="flex flex-1 items-center gap-3 cursor-pointer select-none"
           onClick={() => setActivePage("ma-chart")}
         >
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
@@ -38,7 +39,8 @@ export default function Navbar({ activePage, setActivePage }) {
           </div>
         </div>
 
-          <div className="hidden lg:flex flex-1 justify-center min-w-0 px-4">
+        {/* Center */}
+        <div className="hidden lg:flex flex-none justify-center px-4">
           <div className="flex items-center gap-1 rounded-full border border-white/[0.06] bg-slate-950/50 px-1.5 py-1.5 shadow-inner shadow-black/20 overflow-x-auto max-w-full">
             {navItems.map((item) => (
               <button
@@ -46,7 +48,7 @@ export default function Navbar({ activePage, setActivePage }) {
                 onClick={() => setActivePage(item.page)}
                 className={`h-9 flex items-center justify-center rounded-full border whitespace-nowrap text-[10px] font-semibold tracking-[0.02em] transition-all duration-200 px-4 ${
                   activePage === item.page
-                    ? "border-violet-400/30 bg-violet-500/18 text-violet-200"
+                    ? "border-violet-400/30 bg-violet-500/20 text-violet-200"
                     : "border-transparent bg-transparent text-slate-400 hover:border-slate-700/40 hover:bg-slate-800/45 hover:text-slate-200"
                 }`}
               >
@@ -56,7 +58,8 @@ export default function Navbar({ activePage, setActivePage }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0 pr-1">
+        {/* Right Side */}
+        <div className="flex flex-1 items-center justify-end gap-3 pr-1">
           {/* ─── Theme Toggle ─── */}
           <button
             onClick={toggle}
