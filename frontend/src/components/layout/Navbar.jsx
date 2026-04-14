@@ -1,6 +1,7 @@
+import React from "react";
 import { Bell, User, ChevronDown, Zap, Sun, Moon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../../context/ThemeContext";
-import { LIGHT, DARK } from "../../theme/tokens";
 
 const navItems = [
   { label: "Chart AI", page: "ma-chart" },
@@ -13,103 +14,110 @@ const navItems = [
 
 export default function Navbar({ activePage, setActivePage }) {
   const { isDark, toggle } = useTheme();
-  const t = isDark ? DARK : LIGHT;
 
   return (
-    <nav
-      style={{
-        zIndex: 9000,
-        height: 76,
-        borderBottom: `1px solid ${t.border}`,
-        background: t.card,
-        fontFamily: "'Inter', system-ui, sans-serif",
-      }}
-    >
-      <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between gap-4 px-4 sm:gap-8 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-[9000] h-[72px] md:h-[80px] border-b border-white/[0.08] bg-[#050810]/70 backdrop-blur-2xl shadow-2xl">
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 lg:px-10">
         
-        {/* Left Side */}
-        <div
-          className="flex items-center gap-3 shrink-0 cursor-pointer select-none"
+        {/* ───────── LEFT: LOGO ───────── */}
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center gap-3.5 cursor-pointer select-none group"
           onClick={() => setActivePage("ma-chart")}
         >
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: `linear-gradient(135deg, ${t.primary}, #c026d3)`, display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "center", boxShadow: `0 4px 12px ${t.primary}40` }}>
-            <Zap size={20} color="#fff" fill="#fff" />
+          <div className="relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500" />
+            <div className="relative w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+              <Zap size={18} className="text-white fill-white" />
+            </div>
           </div>
-          <div style={{ lineHeight: 1 }}>
-            <span style={{ color: t.textPrimary, fontWeight: 800, fontSize: 22, letterSpacing: "-0.02em" }}>
-              Smart<span style={{ color: t.primary }}>Invest</span>
+
+          <div className="leading-tight hidden xs:block">
+            <span className="text-white font-bold text-[22px] tracking-tight">
+              Smart<span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-400">Invest</span>
             </span>
-            <p className="hidden sm:block" style={{ color: t.textSecondary, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 4, fontWeight: 700 }}>
+            <p className="text-slate-500 text-[10px] tracking-[2.5px] uppercase font-bold opacity-80">
               Multi-AI Terminal
             </p>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Center */}
-        <div className="hidden lg:flex flex-none justify-center px-2">
-          <div style={{ display: "flex", alignItems: "center", gap: 4, borderRadius: 9999, border: `1px solid ${t.border}`, background: t.badgeBg, padding: 4 }}>
+        {/* ───────── CENTER: NAV PILL ───────── */}
+        <div className="hidden lg:flex items-center">
+          <div className="flex items-center gap-1 p-1.5 rounded-full border border-white/[0.08] bg-slate-900/40 backdrop-blur-md shadow-inner">
             {navItems.map((item) => {
               const isActive = activePage === item.page;
               return (
                 <button
                   key={item.page}
                   onClick={() => setActivePage(item.page)}
-                  style={{
-                    height: 36,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 9999,
-                    border: "none",
-                    whiteSpace: "nowrap",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    letterSpacing: "0.01em",
-                    padding: "0 20px",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    background: isActive ? t.activePillBg : "transparent",
-                    color: isActive ? t.activePillText : t.textSecondary,
-                  }}
+                  className={`relative h-9 px-5 rounded-full text-[12px] font-bold tracking-wide transition-colors duration-300 whitespace-nowrap
+                    ${isActive ? "text-white" : "text-slate-400 hover:text-slate-200"}`}
                 >
-                  {item.label}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-gradient-to-r from-violet-600/30 to-fuchsia-600/30 border border-violet-500/40 rounded-full"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  <span className="relative z-10">{item.label}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Right Side */}
-        <div className="flex items-center justify-end shrink-0 gap-3">
-          {/* Theme Toggle */}
-          <button
-            onClick={toggle}
-            style={{
-              width: 40, height: 40, borderRadius: 12, background: t.hoverBg, border: `1px solid ${t.border}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s"
-            }}
-          >
-            {isDark ? <Sun size={18} color={t.warning} /> : <Moon size={18} color={t.primary} />}
+        {/* ───────── RIGHT: ACTIONS ───────── */}
+        <div className="flex items-center gap-4">
+          
+          <div className="flex items-center gap-2">
+            {/* Theme Toggle */}
+            <NavActionIcon onClick={toggle} activeColor="text-amber-400">
+              {isDark ? <Sun size={18} /> : <Moon size={18} className="text-indigo-400" />}
+            </NavActionIcon>
+
+            {/* Notifications */}
+            <NavActionIcon className="relative">
+              <Bell size={18} />
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-fuchsia-500 rounded-full border-2 border-[#050810] animate-pulse" />
+            </NavActionIcon>
+          </div>
+
+          {/* Profile Component */}
+          <button className="group flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-2xl bg-slate-900/50 border border-white/[0.05] hover:border-violet-500/40 hover:bg-slate-800/80 transition-all duration-300 shadow-xl">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center border border-white/10 group-hover:border-violet-500/30 transition-colors">
+              <User size={16} className="text-slate-300 group-hover:text-white" />
+            </div>
+
+            <div className="hidden sm:block text-left">
+              <p className="text-[12px] font-bold text-slate-100 group-hover:text-violet-300 transition-colors">Portfolio</p>
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+                <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Live</p>
+              </div>
+            </div>
+
+            <ChevronDown size={14} className="text-slate-500 group-hover:text-slate-300 transition-transform group-hover:rotate-180" />
           </button>
 
-          {/* Bell */}
-          <button className="hidden sm:flex" style={{ position: "relative", width: 40, height: 40, borderRadius: 12, background: t.hoverBg, border: `1px solid ${t.border}`, alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-            <Bell size={18} color={t.textSecondary} />
-            <span style={{ position: "absolute", top: 8, right: 8, width: 8, height: 8, background: t.primary, borderRadius: "50%", border: `2px solid ${t.card}` }} />
-          </button>
-
-          {/* User Profile */}
-          <button style={{ display: "flex", alignItems: "center", gap: 10, padding: "4px 12px 4px 4px", borderRadius: 14, background: t.hoverBg, border: `1px solid ${t.border}`, cursor: "pointer" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 10, background: t.badgeBg, border: `1px solid ${t.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <User size={16} color={t.textSecondary} />
-            </div>
-            <div className="hidden sm:block text-left" style={{ lineHeight: 1.2 }}>
-              <p style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary, margin: 0 }}>Portfolio</p>
-              <p style={{ fontSize: 10, color: t.textSecondary, margin: 0, marginTop: 2 }}>Live</p>
-            </div>
-            <ChevronDown size={14} color={t.textSecondary} style={{ marginLeft: 4 }} />
-          </button>
         </div>
       </div>
     </nav>
+  );
+}
+
+// Reusable Icon Wrapper for Right Side
+function NavActionIcon({ children, onClick, className = "", activeColor = "text-violet-400" }) {
+  return (
+    <motion.button
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={onClick}
+      className={`w-11 h-11 rounded-xl bg-slate-900/50 border border-white/[0.05] flex items-center justify-center text-slate-400 hover:${activeColor} hover:border-violet-500/20 hover:bg-slate-800/80 transition-all duration-200 ${className}`}
+    >
+      {children}
+    </motion.button>
   );
 }
