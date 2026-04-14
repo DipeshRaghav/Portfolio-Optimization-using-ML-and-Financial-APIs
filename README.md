@@ -1,4 +1,6 @@
-﻿# 📈 Portfolio Optimization — ML + Financial APIs
+# SmartInvest - Real Time Risk Assessment System
+
+## 📈 Portfolio Optimization — ML + Financial APIs
 
 A full-stack app that predicts stock returns and optimizes your portfolio using Machine Learning and real-time market data.
 
