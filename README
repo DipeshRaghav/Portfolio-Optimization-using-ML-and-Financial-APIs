@@ -1,0 +1,109 @@
+📊 SmartInvest
+Real-Time Risk Assessment System for Portfolio Optimization using ML & Financial APIs
+🚀 Overview
+SmartInvest is a modern fintech web application that helps users make data-driven investment decisions by combining:
+
+📈 Financial Analysis
+
+🤖 Machine Learning Predictions
+
+📊 Portfolio Optimization
+
+⚠️ Risk Assessment
+
+The platform provides an interactive dashboard where users can analyze stocks, evaluate risk, and optimize their portfolio efficiently.
+
+🎯 Problem Statement
+Investors often struggle with:
+
+Understanding market trends
+
+Balancing risk vs return
+
+Choosing optimal stock combinations
+
+Interpreting technical indicators
+
+SmartInvest solves this by providing intelligent insights instead of raw data.
+
+✨ Key Features
+📊 Dashboard
+Portfolio overview (AUM, Risk Score, Volatility)
+
+Interactive charts
+
+ML-based predictions
+
+📈 Market Analysis
+Stock price visualization
+
+Technical indicators (MA, RSI, etc.)
+
+Trend analysis
+
+🥧 Portfolio Optimization
+Multi-stock selection
+
+Allocation visualization (Pie Chart)
+
+Optimized portfolio suggestions
+
+⚠️ Risk Analysis
+Sharpe Ratio
+
+Sortino Ratio
+
+Volatility
+
+Max Drawdown
+
+🔮 Simulation
+Future portfolio prediction
+
+Growth visualization
+
+📜 History & Triggers
+Signal-based insights
+
+Event timeline
+
+Model reasoning
+
+🧠 Tech Stack
+💻 Frontend
+React (Vite)
+
+Tailwind CSS
+
+Recharts
+
+Lucide Icons
+
+⚙️ Backend
+Python
+
+Pandas, NumPy
+
+Scikit-learn
+
+🤖 Machine Learning
+Random Forest Regressor
+
+Feature Engineering (MA, Volatility, Momentum)
+
+🌐 APIs
+Yahoo Finance (yfinance)
+
+⚙️ How It Works
+📥 Fetch stock data using APIs
+
+🧹 Preprocess and generate features
+
+🤖 Train ML model
+
+📊 Predict returns
+
+📈 Visualize insights on dashboard
+
+🧠 Generate recommendations
+
