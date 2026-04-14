@@ -1,40 +1,20 @@
-# 📈 Portfolio Optimization using ML and Financial APIs
+# 📈 Portfolio Optimization — ML + Financial APIs
 
-> An end-to-end full-stack application that uses Machine Learning models and real-time Financial APIs to predict stock returns, optimize portfolio allocation, and deliver technical analysis — all through a clean, interactive web interface.
+A full-stack app that predicts stock returns and optimizes your portfolio using Machine Learning and real-time market data.
 
----
-
-## 🧭 Table of Contents
-
-- [Overview](#-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [How It Works](#-how-it-works)
-- [API Endpoints](#-api-endpoints)
-- [Installation & Setup](#-installation--setup)
-  - [Backend Setup (Python / FastAPI)](#backend-setup-python--fastapi)
-  - [Frontend Setup (React / Vite)](#frontend-setup-react--vite)
-- [Usage](#-usage)
-- [ML Models Used](#-ml-models-used)
-- [Portfolio Optimization Logic](#-portfolio-optimization-logic)
-- [Scoring Metrics Explained](#-scoring-metrics-explained)
-- [Environment Variables](#-environment-variables)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License](#-license)
+![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square&logo=fastapi)
+![React](https://img.shields.io/badge/React-Vite-61DAFB?style=flat-square&logo=react)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 ---
 
-## 🔍 Overview
+## 🚀 What It Does
 
-This project combines **financial engineering** with **machine learning** to help users build smarter investment portfolios. Instead of relying on gut feeling or simple averages, it:
-
-1. **Fetches real-time and historical stock data** via Yahoo Finance API (`yfinance`)
-2. **Predicts future stock returns** using an ML pipeline (Random Forest + LSTM + Sentiment)
-3. **Optimizes portfolio weights** to maximize the Sharpe Ratio (return per unit of risk)
-4. **Displays results** through a React frontend with charts, indicators, and reports
-
-Whether you're a finance student, developer, or a curious investor — this project walks you through intelligent portfolio construction from scratch.
+- 🔍 **Search** any stock, ETF, crypto, or index (live via Yahoo Finance)
+- 🤖 **Predict** expected returns using ML (Random Forest + LSTM + Sentiment)
+- ⚖️ **Optimize** portfolio weights to maximize the Sharpe Ratio
+- 📊 **Analyze** technical indicators — RSI, MACD, moving averages
+- 📰 **Report** full AI-powered deep-dive for any single stock
 
 ---
