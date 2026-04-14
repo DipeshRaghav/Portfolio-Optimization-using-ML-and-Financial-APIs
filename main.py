@@ -1,3 +1,4 @@
+# Import required libraries
 import requests
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -44,6 +45,8 @@ def predict(stocks: List[str] = Query(...)):
 
     except Exception as e:
         return {"error": str(e)}
+        # -------------------- MARKET DATA ENDPOINT --------------------
+# Fetch historical market data for given stocks
 @app.get("/market-data")
 def market_data(stocks: List[str] = Query(...), period: str = Query(default="1mo")):
     try:
@@ -57,7 +60,8 @@ def market_data(stocks: List[str] = Query(...), period: str = Query(default="1mo
 
     except Exception as e:
         return {"error": str(e)}
-
+# -------------------- PORTFOLIO OPTIMIZATION ENDPOINT --------------------
+# Returns optimized portfolio allocation
 @app.get("/optimize")
 def optimize_portfolio(stocks: List[str] = Query(...)):
     try:
@@ -66,16 +70,18 @@ def optimize_portfolio(stocks: List[str] = Query(...)):
             stocks = stocks[0].split(",")
 
         stocks = [s.upper() for s in stocks]
-
+ # Call optimization logic
         return get_portfolio_optimization(stocks)
 
     except Exception as e:
         return {"error": str(e)}
-
+# Allowed asset types for search results
 _ALLOWED_SEARCH_TYPES = frozenset(
     {"EQUITY", "ETF", "MUTUALFUND", "INDEX", "CRYPTOCURRENCY", "CURRENCY"}
 )
 
+# -------------------- STOCK SEARCH ENDPOINT --------------------
+# Uses Yahoo Finance API to search stock symbols
 
 @app.get("/search")
 def search_stock(query: str = Query(..., min_length=1)):
