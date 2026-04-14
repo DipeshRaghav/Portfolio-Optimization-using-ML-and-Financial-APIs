@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Bell, User, ChevronDown, Zap, Sun, Moon, LogIn, Settings, ShieldCheck, LogOut, X, Mail, Lock } from "lucide-react";
+import { Bell, User, ChevronDown, Zap, Sun, Moon, LogIn, LogOut, X, Mail, Lock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -17,11 +17,13 @@ export default function Navbar({ activePage, setActivePage }) {
   const [hoveredTab, setHoveredTab] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  
+  // UPDATED AUTH STATE: Name set to Utsah
   const [user, setUser] = useState(null); 
 
   const profileRef = useRef(null);
 
-  // ─── RESTORED: GLOBAL KEYBOARD SHORTCUTS ───
+  // Global Keyboard Shortcuts (Alt + 1-6)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.altKey && e.key >= "1" && e.key <= "6") {
@@ -34,7 +36,7 @@ export default function Navbar({ activePage, setActivePage }) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [setActivePage]);
 
-  // Click Outside logic
+  // Handle outside clicks to close dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -47,7 +49,7 @@ export default function Navbar({ activePage, setActivePage }) {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    setUser({ name: "Alex Trader", email: "alex@smartinvest.ai" });
+    setUser({ name: "Utsah", email: "utsah@smartinvest.ai" });
     setIsAuthModalOpen(false);
   };
 
@@ -161,9 +163,6 @@ export default function Navbar({ activePage, setActivePage }) {
                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Authenticated As</p>
                            <p className="text-[13px] font-bold text-white truncate">{user.email}</p>
                         </div>
-                        <DropdownItem icon={<Settings size={16}/>} label="Settings" onClick={() => {}} />
-                        <DropdownItem icon={<ShieldCheck size={16}/>} label="Pro Features" onClick={() => {}} />
-                        <div className="h-px bg-white/[0.05] my-2" />
                         <DropdownItem icon={<LogOut size={16}/>} label="Logout" color="text-rose-400" onClick={handleLogout} />
                       </>
                     )}
@@ -175,7 +174,7 @@ export default function Navbar({ activePage, setActivePage }) {
         </div>
       </nav>
 
-      {/* AUTH MODAL BLOCK (Same as before, keep it at the end of return) */}
+      {/* AUTH MODAL */}
       <AnimatePresence>
         {isAuthModalOpen && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
@@ -209,7 +208,6 @@ export default function Navbar({ activePage, setActivePage }) {
   );
 }
 
-// Utility Components (Sub-functions)
 function DropdownItem({ icon, label, onClick, color = "text-slate-300" }) {
   return (
     <button onClick={onClick} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.05] transition-all group">
