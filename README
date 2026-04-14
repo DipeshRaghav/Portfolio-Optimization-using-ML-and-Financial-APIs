@@ -84,26 +84,21 @@ Python
 
 Pandas, NumPy
 
-Scikit-learn
+👥 Team Members
+Dipesh
 
-🤖 Machine Learning
-Random Forest Regressor
+Ishika Banga
 
-Feature Engineering (MA, Volatility, Momentum)
+Utsah Singhal
 
-🌐 APIs
-Yahoo Finance (yfinance)
+Bhawna Sharma
 
-⚙️ How It Works
-📥 Fetch stock data using APIs
+Vanshika Dubey
 
-🧹 Preprocess and generate features
+Vinay Khatana
 
-🤖 Train ML model
+🎯 Conclusion
+SmartInvest transforms complex financial data into simple, actionable insights, helping users make smarter and safer investment decisions.
 
-📊 Predict returns
 
-📈 Visualize insights on dashboard
-
-🧠 Generate recommendations
 
