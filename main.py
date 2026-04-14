@@ -138,7 +138,8 @@ def get_technicals(stock: str = Query(...)):
     except Exception as e:
         return {"error": str(e)}
 
-
+# -------------------- MULTI-MODEL PREDICTION ENDPOINT --------------------
+# Combines multiple models (LSTM, RF, sentiment, etc.)
 @app.get("/multi-model/predict")
 def multi_model_predict(
     stocks: List[str] = Query(..., description="One or more tickers (comma-separated allowed)"),
@@ -149,9 +150,11 @@ def multi_model_predict(
     Runs the 5-vertical stock_predictor pipeline (chart LSTM, indicators, sentiment,
     historical RF, market context) + ensemble + risk + demo backtest per symbol.
     """
+     # Handle comma-separated input
     if len(stocks) == 1 and "," in stocks[0]:
         stocks = [s.strip() for s in stocks[0].split(",") if s.strip()]
     stocks = [s.upper() for s in stocks]
+    # Validation checks
     if not stocks:
         raise HTTPException(400, "No symbols provided")
     if len(stocks) > 5:
@@ -159,7 +162,7 @@ def multi_model_predict(
     p = period.lower().strip()
     if p not in _ALLOWED_MULTIMODEL_PERIODS:
         raise HTTPException(400, f"period must be one of: {sorted(_ALLOWED_MULTIMODEL_PERIODS)}")
-
+    # Import multi-model integration
     try:
         from stock_predictor.integration import predict_for_symbol
     except ImportError as e:
@@ -171,6 +174,7 @@ def multi_model_predict(
 
     results = []
     errors = []
+     # Run prediction for each stock
     for sym in stocks:
         try:
             out = predict_for_symbol(sym, period=p, chart_epochs=chart_epochs)
@@ -185,7 +189,9 @@ def multi_model_predict(
         "errors": errors,
     }
 
-
+# -------------------- FULL REPORT ENDPOINT --------------------
+# Returns complete analysis including:
+# predictions, risk, sentiment, charts, etc.
 @app.get("/multi-model/full-report")
 def multi_model_full_report(
     symbol: str = Query(..., description="Single ticker, e.g. AAPL"),
