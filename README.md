@@ -133,13 +133,21 @@ Flow:
 **No data from yfinance** → Verify ticker using `/search` first
 
 ---
+## 📚 Key Learnings
+
+- Applied ML models to real financial data  
+- Learned portfolio optimization techniques  
+- Built full-stack system with real-time APIs  
+- Improved UI/UX for data-heavy applications
+
+---
 
 ## 👥 Team Contributions
 
 - Dipesh → Api Integration, Deployment & Project Lead 
 - Bhawna → Data preprocessing & Frontend development 
 - Ishika → ML Model trained & UI/UX
-- Vinay → Data processing & API development 
+- Vinay → Data processing, API development & Frontend 
 - Vanshika → Optimization & Testing  
 - Utsah → Evaluation & Documentation
 
