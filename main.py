@@ -90,13 +90,16 @@ def search_stock(query: str = Query(..., min_length=1)):
     """
     try:
         q = query.strip()
+         # Return empty if query is blank
         if not q:
             return {"results": []}
+         # Yahoo Finance search API URL
         url = (
             "https://query2.finance.yahoo.com/v1/finance/search"
             f"?q={requests.utils.quote(q)}&quotesCount=10&newsCount=0"
         )
         headers = {"User-Agent": "Mozilla/5.0 (compatible; PortfolioML/1.0)"}
+        # Send request
         r = requests.get(url, headers=headers, timeout=12)
         r.raise_for_status()
         data = r.json()
@@ -126,7 +129,8 @@ def search_stock(query: str = Query(..., min_length=1)):
         return {"results": results}
     except Exception as e:
         return {"error": str(e), "results": []}
-
+# -------------------- TECHNICAL INDICATORS ENDPOINT --------------------
+# Returns indicators like RSI, MACD, etc.
 @app.get("/technicals")
 def get_technicals(stock: str = Query(...)):
     try:
