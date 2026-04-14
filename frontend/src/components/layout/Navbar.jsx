@@ -1,5 +1,6 @@
 import { Bell, User, ChevronDown, Zap, Sun, Moon } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
+import { LIGHT, DARK } from "../../theme/tokens";
 
 const navItems = [
   { label: "Chart AI", page: "ma-chart" },
@@ -12,87 +13,100 @@ const navItems = [
 
 export default function Navbar({ activePage, setActivePage }) {
   const { isDark, toggle } = useTheme();
+  const t = isDark ? DARK : LIGHT;
 
   return (
     <nav
-      className="
-        z-[9000] h-[72px] border-b border-white/[0.06] bg-[#050810]/90 shadow-[0_1px_0_rgba(255,255,255,0.03)] backdrop-blur-xl md:h-[76px]
-      "
+      style={{
+        zIndex: 9000,
+        height: 76,
+        borderBottom: `1px solid ${t.border}`,
+        background: t.card,
+        fontFamily: "'Inter', system-ui, sans-serif",
+      }}
     >
-      <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between gap-4 px-4 sm:gap-8 sm:px-6 lg:px-8">
+        
         {/* Left Side */}
         <div
-          className="flex flex-1 items-center gap-3 cursor-pointer select-none"
+          className="flex items-center gap-3 shrink-0 cursor-pointer select-none"
           onClick={() => setActivePage("ma-chart")}
         >
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
-            <Zap size={18} className="text-white" fill="white" />
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: `linear-gradient(135deg, ${t.primary}, #c026d3)`, display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "center", boxShadow: `0 4px 12px ${t.primary}40` }}>
+            <Zap size={20} color="#fff" fill="#fff" />
           </div>
-
-          <div className="leading-none">
-            <span className="text-white font-extrabold text-[22px] tracking-tight">
-              Smart<span className="text-violet-400">Invest</span>
+          <div style={{ lineHeight: 1 }}>
+            <span style={{ color: t.textPrimary, fontWeight: 800, fontSize: 22, letterSpacing: "-0.02em" }}>
+              Smart<span style={{ color: t.primary }}>Invest</span>
             </span>
-            <p className="text-slate-500 text-[9px] tracking-[2.4px] uppercase mt-1 font-bold">
+            <p className="hidden sm:block" style={{ color: t.textSecondary, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 4, fontWeight: 700 }}>
               Multi-AI Terminal
             </p>
           </div>
         </div>
 
         {/* Center */}
-        <div className="hidden lg:flex flex-none justify-center px-4">
-          <div className="flex items-center gap-1 rounded-full border border-white/[0.06] bg-slate-950/50 px-1.5 py-1.5 shadow-inner shadow-black/20 overflow-x-auto max-w-full">
-            {navItems.map((item) => (
-              <button
-                key={item.page}
-                onClick={() => setActivePage(item.page)}
-                className={`h-9 flex items-center justify-center rounded-full border whitespace-nowrap text-[10px] font-semibold tracking-[0.02em] transition-all duration-200 px-4 ${
-                  activePage === item.page
-                    ? "border-violet-400/30 bg-violet-500/20 text-violet-200"
-                    : "border-transparent bg-transparent text-slate-400 hover:border-slate-700/40 hover:bg-slate-800/45 hover:text-slate-200"
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
+        <div className="hidden lg:flex flex-none justify-center px-2">
+          <div style={{ display: "flex", alignItems: "center", gap: 4, borderRadius: 9999, border: `1px solid ${t.border}`, background: t.badgeBg, padding: 4 }}>
+            {navItems.map((item) => {
+              const isActive = activePage === item.page;
+              return (
+                <button
+                  key={item.page}
+                  onClick={() => setActivePage(item.page)}
+                  style={{
+                    height: 36,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 9999,
+                    border: "none",
+                    whiteSpace: "nowrap",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    letterSpacing: "0.01em",
+                    padding: "0 20px",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    background: isActive ? t.activePillBg : "transparent",
+                    color: isActive ? t.activePillText : t.textSecondary,
+                  }}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Right Side */}
-        <div className="flex flex-1 items-center justify-end gap-3 pr-1">
-          {/* ─── Theme Toggle ─── */}
+        <div className="flex items-center justify-end shrink-0 gap-3">
+          {/* Theme Toggle */}
           <button
             onClick={toggle}
-            aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-            title={isDark ? "Light mode" : "Dark mode"}
-            className="relative w-10 h-10 rounded-xl bg-slate-900/45 border border-slate-800/45 flex items-center justify-center text-slate-400 hover:text-amber-400 hover:border-amber-500/30 hover:bg-slate-800/50 transition-all duration-300 overflow-hidden"
+            style={{
+              width: 40, height: 40, borderRadius: 12, background: t.hoverBg, border: `1px solid ${t.border}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s"
+            }}
           >
-            <div
-              key={isDark ? "moon" : "sun"}
-              className="theme-toggle-enter"
-            >
-              {isDark ? (
-                <Sun size={16} className="text-amber-400" />
-              ) : (
-                <Moon size={16} className="text-indigo-500" />
-              )}
-            </div>
+            {isDark ? <Sun size={18} color={t.warning} /> : <Moon size={18} color={t.primary} />}
           </button>
 
-          <button className="relative w-10 h-10 rounded-xl bg-slate-900/45 border border-slate-800/45 flex items-center justify-center text-slate-500 hover:text-violet-400 hover:border-violet-500/30 hover:bg-slate-800/50 transition-all duration-200">
-            <Bell size={16} />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-violet-500 rounded-full border-2 border-[#0a1628]"></span>
+          {/* Bell */}
+          <button className="hidden sm:flex" style={{ position: "relative", width: 40, height: 40, borderRadius: 12, background: t.hoverBg, border: `1px solid ${t.border}`, alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+            <Bell size={18} color={t.textSecondary} />
+            <span style={{ position: "absolute", top: 8, right: 8, width: 8, height: 8, background: t.primary, borderRadius: "50%", border: `2px solid ${t.card}` }} />
           </button>
 
-          <button className="flex items-center gap-2.5 pl-1.5 pr-3.5 py-1.5 rounded-2xl bg-slate-900/45 border border-slate-800/45 hover:border-slate-700 hover:bg-slate-800/45 transition-all duration-200">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center border border-slate-600/30">
-              <User size={14} className="text-slate-300" />
+          {/* User Profile */}
+          <button style={{ display: "flex", alignItems: "center", gap: 10, padding: "4px 12px 4px 4px", borderRadius: 14, background: t.hoverBg, border: `1px solid ${t.border}`, cursor: "pointer" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 10, background: t.badgeBg, border: `1px solid ${t.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <User size={16} color={t.textSecondary} />
             </div>
-            <div className="hidden sm:block text-left leading-tight">
-              <p className="text-[11px] font-semibold text-slate-200">Portfolio</p>
-              <p className="text-[9px] text-slate-500">Live</p>
+            <div className="hidden sm:block text-left" style={{ lineHeight: 1.2 }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: t.textPrimary, margin: 0 }}>Portfolio</p>
+              <p style={{ fontSize: 10, color: t.textSecondary, margin: 0, marginTop: 2 }}>Live</p>
             </div>
-            <ChevronDown size={14} className="text-slate-500" />
+            <ChevronDown size={14} color={t.textSecondary} style={{ marginLeft: 4 }} />
           </button>
         </div>
       </div>
