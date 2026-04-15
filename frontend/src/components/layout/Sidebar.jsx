@@ -17,7 +17,6 @@ const navItems = [
   { icon: BarChart3, label: "Analytics", page: "market" },
   { icon: PieChart, label: "Portfolio", page: "portfolio" },
   { icon: ShieldAlert, label: "Risk", page: "risk" },
-  { icon: FlaskConical, label: "Simulation", page: "simulation" },
   { icon: FileText, label: "Reports", page: "reports" },
 ];
 
