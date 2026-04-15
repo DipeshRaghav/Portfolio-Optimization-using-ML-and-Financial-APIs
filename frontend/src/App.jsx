@@ -27,10 +27,11 @@ function AppLayout({ activePage, setActivePage }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh", width: "100%", overflow: "hidden", background: t.bg, color: t.textPrimary, fontFamily: "'Inter', system-ui, sans-serif" }}>
-      <Navbar activePage={activePage} setActivePage={setActivePage} />
-      <TickerBar />
+      <div className="flex h-full w-full min-w-0 flex-col px-3 py-2 sm:px-4 sm:py-3 lg:px-6">
+        <Navbar activePage={activePage} setActivePage={setActivePage} />
+        <TickerBar />
 
-      <div style={{ display: "flex", minHeight: 0, width: "100%", flex: 1, overflow: "hidden" }}>
+        <div style={{ display: "flex", minHeight: 0, width: "100%", flex: 1, overflow: "hidden" }}>
         <main style={{ position: "relative", minHeight: 0, flex: 1, overflowY: "auto", overflowX: "hidden", background: t.bg }}>
           {isDark && (
             <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden>
@@ -49,6 +50,7 @@ function AppLayout({ activePage, setActivePage }) {
             </div>
           </div>
         </main>
+        </div>
       </div>
     </div>
   );
