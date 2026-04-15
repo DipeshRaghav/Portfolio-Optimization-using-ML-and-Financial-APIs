@@ -8,6 +8,7 @@ import PortfolioPage from "./pages/PortfolioPage";
 import RiskPage from "./pages/RiskPage";
 import ReportsPage from "./pages/ReportsPage";
 import SimulationPage from "./pages/SimulationPage";
+import { ThemeProvider } from "./context/ThemeContext";
 
 const PAGE_MAP = {
   dashboard: DashboardPage,
@@ -25,26 +26,28 @@ export default function App() {
   const ActivePage = PAGE_MAP[activePage] ?? DashboardPage;
 
   return (
-    <div className="h-screen overflow-hidden bg-[#0a0f1e] text-slate-200 flex flex-col">
-      {/* Top Navbar */}
-      <Navbar activePage={activePage} setActivePage={setActivePage} />
+    <ThemeProvider>
+      <div className="h-screen overflow-hidden bg-[#0a0f1e] text-slate-200 flex flex-col">
+        {/* Top Navbar */}
+        <Navbar activePage={activePage} setActivePage={setActivePage} />
 
 
-      {/* Live Ticker */}
-      <TickerBar />
+        {/* Live Ticker */}
+        <TickerBar />
 
-      {/* Body: Sidebar + Main Content */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <div className="hidden lg:block relative z-[9999] overflow-visible">
-          <Sidebar activePage={activePage} setActivePage={setActivePage} />
+        {/* Body: Sidebar + Main Content */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Sidebar */}
+          <div className="hidden lg:block relative z-[9999] overflow-visible">
+            <Sidebar activePage={activePage} setActivePage={setActivePage} />
+          </div>
+
+          {/* Main Scrollable Content */}
+          <main className="flex-1 overflow-y-auto bg-[#050810] pl-12">
+            <ActivePage selectedStocks={selectedStocks} setSelectedStocks={setSelectedStocks} />
+          </main>
         </div>
-
-        {/* Main Scrollable Content */}
-        <main className="flex-1 overflow-y-auto bg-[#050810] pl-12">
-          <ActivePage selectedStocks={selectedStocks} setSelectedStocks={setSelectedStocks} />
-        </main>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }
