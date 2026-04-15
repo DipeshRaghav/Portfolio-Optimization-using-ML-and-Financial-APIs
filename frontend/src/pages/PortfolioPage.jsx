@@ -2,6 +2,7 @@ import PortfolioAllocation from "../components/portfolio/PortfolioAllocation";
 import MLPredictions from "../components/predictions/MLPredictions";
 import StockChart from "../components/stock/StockChart";
 import { PieChart, BarChart2 } from "lucide-react";
+import { formatPriceBySymbol } from "../utils/currency";
 
 const holdings = [
   { stock: "AAPL", shares: 50, avgCost: 155.2, current: 178.42, value: 8921, weight: 30 },
@@ -23,7 +24,7 @@ export default function PortfolioPage() {
       {/* Portfolio Value */}
       <div className="glass-card p-8">
         <p className="text-slate-400 text-sm">Total Portfolio Value</p>
-        <p className="text-white font-mono font-bold text-4xl mt-1">${totalValue.toLocaleString()}</p>
+        <p className="text-white font-mono font-bold text-4xl mt-1">{formatPriceBySymbol("AAPL", totalValue)}</p>
         <p className="text-emerald-400 text-sm font-semibold mt-2">+$2,840 (+18.4%) All Time</p>
       </div>
 
@@ -53,13 +54,14 @@ export default function PortfolioPage() {
                   <tr key={h.stock}>
                     <td className="font-bold text-white">{h.stock}</td>
                     <td className="text-right font-mono text-slate-300">{h.shares}</td>
-                    <td className="text-right font-mono text-slate-400">${h.avgCost}</td>
-                    <td className="text-right font-mono text-slate-300">${h.current}</td>
+                    <td className="text-right font-mono text-slate-400">{formatPriceBySymbol(h.stock, h.avgCost)}</td>
+                    <td className="text-right font-mono text-slate-300">{formatPriceBySymbol(h.stock, h.current)}</td>
                     <td className={`text-right font-mono font-semibold ${pnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                      {pnl >= 0 ? "+" : ""}${Math.abs(pnl).toFixed(0)}
+                      {pnl >= 0 ? "+" : ""}
+                      {formatPriceBySymbol(h.stock, Math.abs(pnl), { maximumFractionDigits: 0 })}
                       <span className="text-xs ml-1 opacity-75">({pnlPct >= 0 ? "+" : ""}{pnlPct.toFixed(1)}%)</span>
                     </td>
-                    <td className="text-right font-mono text-white font-semibold">${h.value.toLocaleString()}</td>
+                    <td className="text-right font-mono text-white font-semibold">{formatPriceBySymbol(h.stock, h.value)}</td>
                     <td className="text-right">
                       <span className="text-blue-400 font-semibold text-xs">{h.weight}%</span>
                     </td>

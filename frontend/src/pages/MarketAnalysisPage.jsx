@@ -4,6 +4,7 @@ import {
 } from "recharts";
 import { sectorPerformance, tickerData, stockHistories } from "../data/mockData";
 import { TrendingUp, TrendingDown, Globe } from "lucide-react";
+import { formatPriceBySymbol } from "../utils/currency";
 
 const CustomBarTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
@@ -90,7 +91,7 @@ export default function MarketAnalysisPage() {
               {tickerData.map((t) => (
                 <tr key={t.symbol}>
                   <td className="font-bold text-white">{t.symbol}</td>
-                  <td className="text-right font-mono text-slate-300">${t.price.toLocaleString()}</td>
+                  <td className="text-right font-mono text-slate-300">{formatPriceBySymbol(t.symbol, t.price)}</td>
                   <td className={`text-right font-mono font-semibold ${t.change >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                     {t.change >= 0 ? "+" : ""}{t.change}
                   </td>
@@ -114,7 +115,13 @@ export default function MarketAnalysisPage() {
           <LineChart margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(51,65,85,0.35)" />
             <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={false} allowDuplicatedCategory={false} />
-            <YAxis tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} width={60} />
+            <YAxis
+              tick={{ fill: "#64748b", fontSize: 10 }}
+              tickLine={false}
+              axisLine={false}
+              tickFormatter={(v) => formatPriceBySymbol("AAPL", v, { maximumFractionDigits: 0 })}
+              width={90}
+            />
             <Tooltip />
             <Legend wrapperStyle={{ fontSize: 11 }} />
             {multiStockData.map((s, i) => (

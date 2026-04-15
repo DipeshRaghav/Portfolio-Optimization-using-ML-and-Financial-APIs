@@ -11,13 +11,16 @@ import {
 
 import { getMarketData } from "../../services/api";
 import { Activity, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
+import { formatPriceBySymbol } from "../../utils/currency";
 
-const CustomTooltip = ({ active, payload }) => {
+const CustomTooltip = ({ active, payload, stock }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#0d1527] border border-slate-800/60 rounded-xl p-3 shadow-2xl">
         <p className="text-slate-400 text-[10px] mb-1 font-mono uppercase tracking-wider">Price</p>
-        <p className="font-mono font-bold text-white text-lg">${Number(payload[0].value).toFixed(2)}</p>
+        <p className="font-mono font-bold text-white text-lg">
+          {formatPriceBySymbol(stock, Number(payload[0].value))}
+        </p>
       </div>
     );
   }
@@ -116,7 +119,7 @@ export default function StockChart({ selectedStocks, activeStock }) {
           </h2>
           <div className="flex items-center gap-3 mt-2">
             <span className="text-white text-2xl font-bold">
-              ${lastPrice.toFixed(2)}
+              {formatPriceBySymbol(stock, lastPrice)}
             </span>
             <span
               className={`flex items-center gap-1 ${
@@ -153,8 +156,15 @@ export default function StockChart({ selectedStocks, activeStock }) {
           <AreaChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
             <XAxis dataKey="date" hide />
-            <YAxis domain={['auto', 'auto']} tick={{ fill: "#475569", fontSize: 10 }} tickLine={false} axisLine={false} width={40} />
-            <Tooltip content={<CustomTooltip />} cursor={{stroke: "#334155", strokeWidth: 1, strokeDasharray: "3 3"}} />
+            <YAxis
+              domain={["auto", "auto"]}
+              tick={{ fill: "#475569", fontSize: 10 }}
+              tickLine={false}
+              axisLine={false}
+              width={90}
+              tickFormatter={(v) => formatPriceBySymbol(stock, v, { maximumFractionDigits: 0 })}
+            />
+            <Tooltip content={<CustomTooltip stock={stock} />} cursor={{stroke: "#334155", strokeWidth: 1, strokeDasharray: "3 3"}} />
             <Area
               type="monotone"
               dataKey="price"

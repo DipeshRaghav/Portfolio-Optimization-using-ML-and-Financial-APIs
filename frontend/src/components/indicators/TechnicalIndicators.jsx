@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Activity, BarChart2, TrendingUp, Volume2, AlertCircle, Loader2 } from "lucide-react";
 import { getTechnicalData } from "../../services/api";
+import { formatPriceBySymbol } from "../../utils/currency";
 
 const getRsiColor = (rsi) => {
   if (rsi >= 70) return { text: "text-red-400", label: "Overbought", bg: "bg-red-500/10" };
@@ -95,7 +96,7 @@ export default function TechnicalIndicators({ selectedStocks }) {
           {[{ label: "MA 20", val: data.ma20 }, { label: "MA 50", val: data.ma50 }, { label: "MA 200", val: data.ma200 }].map((m) => (
             <div key={m.label} className="flex justify-between items-center border-b border-slate-800/50 pb-2 last:border-0 last:pb-0">
               <span className="text-slate-400 text-xs font-medium">{m.label}</span>
-              <span className={`text-sm font-semibold text-slate-200 font-mono`}>${m.val}</span>
+              <span className={`text-sm font-semibold text-slate-200 font-mono`}>{formatPriceBySymbol(stock, m.val)}</span>
             </div>
           ))}
         </div>
@@ -107,11 +108,11 @@ export default function TechnicalIndicators({ selectedStocks }) {
           </span>
           <div className="flex justify-between items-center border-b border-slate-800/50 pb-2">
             <span className="text-slate-400 text-xs font-medium">Upper Band</span>
-            <span className="text-sm font-semibold text-emerald-400 font-mono">${data.bbUpper}</span>
+            <span className="text-sm font-semibold text-emerald-400 font-mono">{formatPriceBySymbol(stock, data.bbUpper)}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-slate-400 text-xs font-medium">Lower Band</span>
-            <span className="text-sm font-semibold text-red-400 font-mono">${data.bbLower}</span>
+            <span className="text-sm font-semibold text-red-400 font-mono">{formatPriceBySymbol(stock, data.bbLower)}</span>
           </div>
         </div>
 

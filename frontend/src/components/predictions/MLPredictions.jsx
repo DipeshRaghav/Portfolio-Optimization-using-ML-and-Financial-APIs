@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getPredictions } from "../../services/api";
 import { Brain, TrendingUp, TrendingDown } from "lucide-react";
+import { formatPriceBySymbol } from "../../utils/currency";
 
 const SignalBadge = ({ signal }) => {
   if (signal === "Buy") return <span className="signal-buy">▲ BUY</span>;
@@ -55,7 +56,7 @@ export default function MLPredictions({ selectedStocks }) {
   // 🔥 Transform API → UI format (SAFE)
   const formattedData = data.map((p) => ({
     stock: p.stock,
-    currentPrice: p.current_price.toFixed(2),
+    currentPrice: Number(p.current_price),
     predictedReturn: p.predicted_return.toFixed(2),
     signal: p.signal.includes("BUY") ? "Buy" : p.signal.includes("SELL") ? "Sell" : "Hold",
     confidence: Math.floor(Math.random() * 20) + 70, // dummy confidence until we add predict_proba
@@ -134,7 +135,7 @@ export default function MLPredictions({ selectedStocks }) {
                   </td>
 
                   <td className="text-right font-mono text-slate-300">
-                    ${p.currentPrice}
+                    {formatPriceBySymbol(p.stock, p.currentPrice)}
                   </td>
 
                   <td className="text-right">

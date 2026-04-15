@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Brain, FileText, Activity, AlertCircle, Loader2, TrendingUp, TrendingDown, Target, Zap } from "lucide-react";
 import { getPredictions } from "../services/api";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from "recharts";
+import { formatPriceBySymbol } from "../utils/currency";
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
@@ -135,7 +136,7 @@ export default function ReportsPage({ selectedStocks }) {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-bold text-white">{p.stock}</h3>
-                  <span className="text-2xl font-mono text-slate-300 mt-1 block">${p.current_price.toFixed(2)}</span>
+                  <span className="text-2xl font-mono text-slate-300 mt-1 block">{formatPriceBySymbol(p.stock, p.current_price)}</span>
                 </div>
                 <div className={`px-3 py-1 rounded-lg text-xs font-bold border ${isPos ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-red-500/10 text-red-400 border-red-500/20"}`}>
                   {p.signal}
@@ -156,11 +157,11 @@ export default function ReportsPage({ selectedStocks }) {
                 <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2 font-semibold">Active Snapshot Triggers</p>
                 <div className="flex justify-between text-xs">
                   <span className="text-slate-400">MA 10</span>
-                  <span className="text-white font-mono">${p.ma10}</span>
+                  <span className="text-white font-mono">{formatPriceBySymbol(p.stock, p.ma10)}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-slate-400">MA 20</span>
-                  <span className="text-white font-mono">${p.ma20}</span>
+                  <span className="text-white font-mono">{formatPriceBySymbol(p.stock, p.ma20)}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-slate-400">Momentum</span>

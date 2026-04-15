@@ -1,5 +1,6 @@
 import { tickerData } from "../../data/mockData";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { formatPriceBySymbol } from "../../utils/currency";
 
 export default function TickerBar() {
   const doubled = [...tickerData, ...tickerData];
@@ -18,7 +19,7 @@ export default function TickerBar() {
                 {item.symbol}
               </span>
               <span className="font-mono text-[11px] font-bold text-white">
-                ${item.price.toLocaleString()}
+                {formatPriceBySymbol(item.symbol, item.price)}
               </span>
               <span
                 className={`flex items-center gap-1 text-[10px] font-extrabold ${
