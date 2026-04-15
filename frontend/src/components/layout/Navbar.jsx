@@ -6,7 +6,6 @@ const navItems = [
   { label: "ANALYTICS", page: "market" },
   { label: "PORTFOLIO", page: "portfolio" },
   { label: "RISK", page: "risk" },
-  { label: "SIMULATION", page: "simulation" },
   { label: "REPORTS", page: "reports" },
 ];
 
