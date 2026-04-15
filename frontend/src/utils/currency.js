@@ -1,26 +1,31 @@
-const MARKET_CURRENCY_RULES = [
+const currencyMap = [
 
-  { match: s => s.endsWith(".NS") || s.endsWith(".BO"), locale: "en-IN", currency: "INR" },
-  { match: s => s.endsWith(".L"), locale: "en-GB", currency: "GBP" },
-  { match: s => s.endsWith(".TO") || s.endsWith(".V"), locale: "en-CA", currency: "CAD" },
-  { match: s => s.endsWith(".AX"), locale: "en-AU", currency: "AUD" },
-  { match: s => s.endsWith(".HK"), locale: "zh-HK", currency: "HKD" },
-  { match: s => s.endsWith(".T"), locale: "ja-JP", currency: "JPY" },
-  { match: s => s.endsWith(".SS") || s.endsWith(".SZ"), locale: "zh-CN", currency: "CNY" },
+  // INDIA
+  { check: s => s.endsWith(".NS") || s.endsWith(".BO"), locale: "en-IN", currency: "INR" },
 
-  // crypto + US stocks default
-  { match: s => true, locale: "en-US", currency: "USD" }
+  // UK
+  { check: s => s.endsWith(".L"), locale: "en-GB", currency: "GBP" },
+
+  // CANADA
+  { check: s => s.endsWith(".TO"), locale: "en-CA", currency: "CAD" },
+
+  // JAPAN
+  { check: s => s.endsWith(".T"), locale: "ja-JP", currency: "JPY" },
+
+  // CHINA
+  { check: s => s.endsWith(".SS") || s.endsWith(".SZ"), locale: "zh-CN", currency: "CNY" },
+
+  // DEFAULT → USA
+  { check: () => true, locale: "en-US", currency: "USD" }
 
 ];
 
 
-function getCurrency(symbol = "") {
+function getCurrency(symbol="") {
 
-  const s = String(symbol).toUpperCase();
+  const s = symbol.toUpperCase();
 
-  const rule = MARKET_CURRENCY_RULES.find(r => r.match(s));
-
-  return rule || { locale: "en-US", currency: "USD" };
+  return currencyMap.find(r => r.check(s));
 
 }
 
