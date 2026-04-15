@@ -43,7 +43,7 @@ function AppLayout({ activePage, setActivePage }) {
           <div className="relative z-[1] grid min-h-full w-full grid-cols-[1fr_min(100%,100rem)_1fr]">
             <div
               key={activePage}
-              className="page-fade col-start-2 min-h-full min-w-0 px-5 sm:px-8 lg:px-12 xl:px-16"
+              className="page-fade col-start-2 min-h-full min-w-0 p-4 sm:p-6 lg:p-8"
             >
               <ActivePage />
             </div>
