@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Bell, User, ChevronDown, Zap } from "lucide-react";
 
 const navItems = [
-  { label: "CHART AI", page: "ma-chart" },
-  { label: "TECHNICAL", page: "ma-technical" },
-  { label: "SENTIMENT", page: "ma-sentiment" },
-  { label: "HISTORY", page: "ma-history" },
-  { label: "MARKET", page: "ma-market" },
-  { label: "REPORT", page: "ma-report" },
+  { label: "DASHBOARD", page: "dashboard" },
+  { label: "ANALYTICS", page: "market" },
+  { label: "PORTFOLIO", page: "portfolio" },
+  { label: "RISK", page: "risk" },
+  { label: "SIMULATION", page: "simulation" },
+  { label: "REPORTS", page: "reports" },
 ];
 
 export default function Navbar({ activePage, setActivePage }) {
@@ -32,7 +32,7 @@ export default function Navbar({ activePage, setActivePage }) {
         {/* LEFT — LOGO */}
         <div
           className="flex items-center gap-3 min-w-fit shrink-0 cursor-pointer select-none"
-          onClick={() => setActivePage("ma-chart")}
+          onClick={() => setActivePage("dashboard")}
         >
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
             <Zap size={18} className="text-white" fill="white" />
