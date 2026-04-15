@@ -1,18 +1,13 @@
-# Import required libraries
 import requests
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-
 # Import custom ML/finance functions from your project
 from portfolio.predictor import get_stock_predictions
 from portfolio.predictor import get_market_data, get_portfolio_optimization, get_technical_indicators
-
 # Initialize FastAPI app
 
 app = FastAPI()
-
-_ALLOWED_MULTIMODEL_PERIODS = frozenset({"6mo", "1y", "2y", "5y", "ytd", "max"})
 
 # -------------------- CORS CONFIGURATION --------------------
 # CORS (Cross-Origin Resource Sharing) allows frontend apps 
@@ -45,8 +40,6 @@ def predict(stocks: List[str] = Query(...)):
 
     except Exception as e:
         return {"error": str(e)}
-        # -------------------- MARKET DATA ENDPOINT --------------------
-# Fetch historical market data for given stocks
 @app.get("/market-data")
 def market_data(stocks: List[str] = Query(...), period: str = Query(default="1mo")):
     try:
@@ -60,8 +53,7 @@ def market_data(stocks: List[str] = Query(...), period: str = Query(default="1mo
 
     except Exception as e:
         return {"error": str(e)}
-# -------------------- PORTFOLIO OPTIMIZATION ENDPOINT --------------------
-# Returns optimized portfolio allocation
+
 @app.get("/optimize")
 def optimize_portfolio(stocks: List[str] = Query(...)):
     try:
@@ -70,154 +62,28 @@ def optimize_portfolio(stocks: List[str] = Query(...)):
             stocks = stocks[0].split(",")
 
         stocks = [s.upper() for s in stocks]
- # Call optimization logic
+
         return get_portfolio_optimization(stocks)
 
     except Exception as e:
         return {"error": str(e)}
-# Allowed asset types for search results
-_ALLOWED_SEARCH_TYPES = frozenset(
-    {"EQUITY", "ETF", "MUTUALFUND", "INDEX", "CRYPTOCURRENCY", "CURRENCY"}
-)
-
-# -------------------- STOCK SEARCH ENDPOINT --------------------
-# Uses Yahoo Finance API to search stock symbols
 
 @app.get("/search")
-def search_stock(query: str = Query(..., min_length=1)):
-    """
-    Yahoo Finance symbol lookup: top matches for equities, ETFs, indices, crypto, etc.
-    """
+def search_stock(query: str = Query(...)):
     try:
-        q = query.strip()
-         # Return empty if query is blank
-        if not q:
-            return {"results": []}
-         # Yahoo Finance search API URL
-        url = (
-            "https://query2.finance.yahoo.com/v1/finance/search"
-            f"?q={requests.utils.quote(q)}&quotesCount=10&newsCount=0"
-        )
-        headers = {"User-Agent": "Mozilla/5.0 (compatible; PortfolioML/1.0)"}
-        # Send request
-        r = requests.get(url, headers=headers, timeout=12)
-        r.raise_for_status()
+        url = f"https://query2.finance.yahoo.com/v1/finance/search?q={query}&quotesCount=5&newsCount=0"
+        headers = {"User-Agent": "Mozilla/5.0"}
+        r = requests.get(url, headers=headers)
         data = r.json()
-        quotes = data.get("quotes") or []
-        results = []
-        for item in quotes:
-            sym = (item.get("symbol") or "").strip()
-            if not sym:
-                continue
-            qt = item.get("quoteType") or ""
-            if qt and qt not in _ALLOWED_SEARCH_TYPES:
-                continue
-            name = item.get("longname") or item.get("shortname") or item.get("symbol") or sym
-            exch = item.get("exchDisp") or item.get("exchange") or ""
-            results.append(
-                {
-                    "symbol": sym,
-                    "shortname": item.get("shortname") or "",
-                    "longname": item.get("longname") or "",
-                    "name": name,
-                    "exchange": exch,
-                    "quoteType": qt or "EQUITY",
-                }
-            )
-            if len(results) >= 5:
-                break
-        return {"results": results}
+        quotes = data.get("quotes", [])
+        results = [{"symbol": q.get("symbol", ""), "shortname": q.get("shortname", "")} for q in quotes if q.get("quoteType") in ("EQUITY", "ETF", "MUTUALFUND", "INDEX")]
+        return {"results": results[:5]}
     except Exception as e:
-        return {"error": str(e), "results": []}
-# -------------------- TECHNICAL INDICATORS ENDPOINT --------------------
-# Returns indicators like RSI, MACD, etc.
+        return {"error": str(e)}
+
 @app.get("/technicals")
 def get_technicals(stock: str = Query(...)):
     try:
         return get_technical_indicators(stock)
     except Exception as e:
         return {"error": str(e)}
-
-# -------------------- MULTI-MODEL PREDICTION ENDPOINT --------------------
-# Combines multiple models (LSTM, RF, sentiment, etc.)
-@app.get("/multi-model/predict")
-def multi_model_predict(
-    stocks: List[str] = Query(..., description="One or more tickers (comma-separated allowed)"),
-    period: str = Query(default="2y", description="yfinance period: 6mo, 1y, 2y, 5y, ytd, max"),
-    chart_epochs: int = Query(default=2, ge=1, le=12, description="LSTM training epochs (lower = faster API)"),
-):
-    """
-    Runs the 5-vertical stock_predictor pipeline (chart LSTM, indicators, sentiment,
-    historical RF, market context) + ensemble + risk + demo backtest per symbol.
-    """
-     # Handle comma-separated input
-    if len(stocks) == 1 and "," in stocks[0]:
-        stocks = [s.strip() for s in stocks[0].split(",") if s.strip()]
-    stocks = [s.upper() for s in stocks]
-    # Validation checks
-    if not stocks:
-        raise HTTPException(400, "No symbols provided")
-    if len(stocks) > 5:
-        raise HTTPException(400, "Maximum 5 symbols per request")
-    p = period.lower().strip()
-    if p not in _ALLOWED_MULTIMODEL_PERIODS:
-        raise HTTPException(400, f"period must be one of: {sorted(_ALLOWED_MULTIMODEL_PERIODS)}")
-    # Import multi-model integration
-    try:
-        from stock_predictor.integration import predict_for_symbol
-    except ImportError as e:
-        raise HTTPException(
-            503,
-            "Multi-model package not available on this server. "
-            "Install stock_predictor dependencies (see stock_predictor/requirements.txt).",
-        ) from e
-
-    results = []
-    errors = []
-     # Run prediction for each stock
-    for sym in stocks:
-        try:
-            out = predict_for_symbol(sym, period=p, chart_epochs=chart_epochs)
-            results.append(out)
-        except Exception as ex:
-            errors.append({"symbol": sym, "error": str(ex)})
-
-    return {
-        "period": p,
-        "chart_epochs": chart_epochs,
-        "results": results,
-        "errors": errors,
-    }
-
-# -------------------- FULL REPORT ENDPOINT --------------------
-# Returns complete analysis including:
-# predictions, risk, sentiment, charts, etc.
-@app.get("/multi-model/full-report")
-def multi_model_full_report(
-    symbol: str = Query(..., description="Single ticker, e.g. AAPL"),
-    period: str = Query(default="2y"),
-    chart_epochs: int = Query(default=2, ge=1, le=12),
-):
-    """
-    Full Multi-AI payload for the SPA: models, ensemble, risk, news articles,
-    per-vertical reasons, price + forecast series, history triggers, SPX/VIX context.
-    """
-    p = period.lower().strip()
-    if p not in _ALLOWED_MULTIMODEL_PERIODS:
-        raise HTTPException(400, f"period must be one of: {sorted(_ALLOWED_MULTIMODEL_PERIODS)}")
-    sym = symbol.strip().upper()
-    if not sym:
-        raise HTTPException(400, "symbol required")
-
-    try:
-        from stock_predictor.full_report import run_full_report
-    except ImportError as e:
-        raise HTTPException(
-            503,
-            "Multi-model package not available on this server.",
-        ) from e
-
-    try:
-        return run_full_report(sym, period=p, chart_epochs=chart_epochs)
-    except Exception as ex:
-        raise HTTPException(500, str(ex)) from ex

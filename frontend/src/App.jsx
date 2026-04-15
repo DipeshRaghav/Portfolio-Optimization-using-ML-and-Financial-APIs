@@ -1,70 +1,50 @@
 import { useState } from "react";
 import Navbar from "./components/layout/Navbar";
+import Sidebar from "./components/layout/Sidebar";
 import TickerBar from "./components/layout/TickerBar";
-import { MultiAIProvider } from "./context/MultiAIContext";
-import { ThemeProvider, useTheme } from "./context/ThemeContext";
-import { LIGHT, DARK } from "./theme/tokens";
-import MaChartPage from "./pages/ma/MaChartPage";
-import MaTechnicalPage from "./pages/ma/MaTechnicalPage";
-import MaSentimentPage from "./pages/ma/MaSentimentPage";
-import MaHistoryPage from "./pages/ma/MaHistoryPage";
-import MaMarketPage from "./pages/ma/MaMarketPage";
-import MaReportPage from "./pages/ma/MaReportPage";
+import DashboardPage from "./pages/DashboardPage";
+import MarketAnalysisPage from "./pages/MarketAnalysisPage";
+import PortfolioPage from "./pages/PortfolioPage";
+import RiskPage from "./pages/RiskPage";
+import ReportsPage from "./pages/ReportsPage";
+import SimulationPage from "./pages/SimulationPage";
 
 const PAGE_MAP = {
-  "ma-chart": MaChartPage,
-  "ma-technical": MaTechnicalPage,
-  "ma-sentiment": MaSentimentPage,
-  "ma-history": MaHistoryPage,
-  "ma-market": MaMarketPage,
-  "ma-report": MaReportPage,
+  dashboard: DashboardPage,
+  market: MarketAnalysisPage,
+  portfolio: PortfolioPage,
+  risk: RiskPage,
+  reports: ReportsPage,
+  simulation: SimulationPage,
 };
 
-function AppLayout({ activePage, setActivePage }) {
-  const { isDark } = useTheme();
-  const t = isDark ? DARK : LIGHT;
-  const ActivePage = PAGE_MAP[activePage] ?? MaChartPage;
+export default function App() {
+  const [activePage, setActivePage] = useState("dashboard");
+  const [selectedStocks, setSelectedStocks] = useState(["AAPL", "MSFT", "GOOGL", "TSLA", "AMZN"]);
+
+  const ActivePage = PAGE_MAP[activePage] ?? DashboardPage;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh", width: "100%", overflow: "hidden", background: t.bg, color: t.textPrimary, fontFamily: "'Inter', system-ui, sans-serif" }}>
-      <div className="flex h-full w-full min-w-0 flex-col px-3 py-2 sm:px-4 sm:py-3 lg:px-6">
-        <Navbar activePage={activePage} setActivePage={setActivePage} />
-        <TickerBar />
+    <div className="h-screen overflow-hidden bg-[#0a0f1e] text-slate-200 flex flex-col">
+      {/* Top Navbar */}
+      <Navbar activePage={activePage} setActivePage={setActivePage} />
 
-        <div style={{ display: "flex", minHeight: 0, width: "100%", flex: 1, overflow: "hidden" }}>
-        <main style={{ position: "relative", minHeight: 0, flex: 1, overflowY: "auto", overflowX: "hidden", background: t.bg }}>
-          {isDark && (
-            <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden>
-              <div className="absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-violet-600/[0.06] blur-[100px]" />
-              <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/[0.05] blur-[100px]" />
-              <div className="absolute bottom-0 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-cyan-600/[0.04] blur-[90px]" />
-            </div>
-          )}
-          {/* 1fr | content (max 100rem) | 1fr — keeps column centered, fills wide screens */}
-          <div className="relative z-[1] grid min-h-full w-full grid-cols-[1fr_min(100%,100rem)_1fr]">
-            <div
-              key={activePage}
-              className="page-fade col-start-2 min-h-full min-w-0 p-4 sm:p-6 lg:p-8"
-            >
-              <ActivePage />
-            </div>
-          </div>
-        </main>
+
+      {/* Live Ticker */}
+      <TickerBar />
+
+      {/* Body: Sidebar + Main Content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <div className="hidden lg:block relative z-[9999] overflow-visible">
+          <Sidebar activePage={activePage} setActivePage={setActivePage} />
         </div>
+
+        {/* Main Scrollable Content */}
+        <main className="flex-1 overflow-y-auto bg-[#050810] pl-12">
+          <ActivePage selectedStocks={selectedStocks} setSelectedStocks={setSelectedStocks} />
+        </main>
       </div>
     </div>
-  );
-}
-
-export default function App() {
-  const [activePage, setActivePage] = useState("ma-chart");
-  const [selectedStocks] = useState(["AAPL", "MSFT", "GOOGL", "TSLA", "AMZN"]);
-
-  return (
-    <ThemeProvider>
-      <MultiAIProvider initialSymbol={selectedStocks[0] || "AAPL"}>
-        <AppLayout activePage={activePage} setActivePage={setActivePage} />
-      </MultiAIProvider>
-    </ThemeProvider>
   );
 }
